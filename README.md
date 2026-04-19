@@ -84,7 +84,21 @@ The Flask route in `app/routes/products.py` reads the `page` and `q` query param
 - If `q` has a search value, the backend calls the DummyJSON `/products/search` endpoint.
 - Pagination is handled in the backend by converting the page number into DummyJSON `skip` and `limit` parameters.
 - The service layer in `app/services/products.py` calls DummyJSON, validates the response, and normalizes product data before it reaches the template.
+- Successful product responses are cached briefly in memory so repeated requests do not always call DummyJSON.
 - The Jinja template renders the search form, product table, pagination links, empty states, and error messages.
+
+## Backend Cache
+
+The app uses a small in-memory cache for successful DummyJSON product responses. Cached values are stored inside the running Flask process for 60 seconds.
+
+Cache keys include the request type, search query, page size, and skip value. That means normal listing pages, search results, and different pagination pages are cached separately.
+
+The cache is intentionally simple:
+
+- failed API responses are not cached;
+- raw exceptions are not cached;
+- the cache resets when Flask restarts;
+- the cache is not shared across multiple server processes or containers.
 
 ## Gallery Behavior
 
@@ -100,7 +114,7 @@ Clicking the same Gallery button closes the gallery. Opening another product gal
 - API calls, search, and pagination are handled in Python/Flask, not frontend JavaScript.
 - The UI uses Jinja, plain CSS, and vanilla JavaScript only.
 - The project uses `uv` for dependency management and local commands.
-- Product data is not stored in a database; it is fetched from DummyJSON on request.
+- Product data is not stored in a database; successful API responses are cached briefly in memory.
 - Small dataclass models are used to keep product and pagination data predictable.
 - The page size is fixed at 10 products per page.
 - Tests cover the main backend behavior and were added after being explicitly requested.
@@ -114,10 +128,11 @@ Clicking the same Gallery button closes the gallery. Opening another product gal
 - A service layer keeps DummyJSON API logic separate from routes and templates.
 - Dataclass models make API data easier to pass around without adding database or schema complexity.
 - Small utility functions keep pagination and type conversion reusable and easier to understand.
+- A small in-memory cache reduces repeated external API calls without adding Redis or another service for this assignment.
 
 ## Known Limitations
 
 - The optional WordPress plugin bonus is not implemented.
 - The app depends on DummyJSON being available at runtime.
-- There is no local caching layer for product data.
+- The in-memory cache is local to one Flask process and is cleared on restart.
 - There is no custom favicon, so browsers may request `/favicon.ico` and receive a harmless 404.
