@@ -37,6 +37,45 @@ Run the backend test suite:
 uv run pytest
 ```
 
+## Docker
+
+Build the container image:
+
+```bash
+docker build -t products-api-assignment .
+```
+
+Run the container:
+
+```bash
+docker run --rm -p 8000:8000 products-api-assignment
+```
+
+Then open:
+
+```text
+http://127.0.0.1:8000
+```
+
+## CI Security Scan
+
+GitHub Actions builds the Docker image with the local CI tag:
+
+```text
+products-api-assignment:ci
+```
+
+The workflow scans that image with Trivy before running the container smoke check. The image is scanned only inside CI and is not pushed to a registry.
+
+Trivy checks:
+
+- operating system packages from the Docker base image, such as Debian packages;
+- Python packages installed in the container;
+- only vulnerability findings, not secrets or configuration issues;
+- only `HIGH` and `CRITICAL` severities.
+
+CI fails when Trivy finds a `HIGH` or `CRITICAL` vulnerability that has a fixed version available. Unfixed vulnerabilities are still printed in the CI logs, but they do not fail the build because there is no patched package version to upgrade to yet.
+
 ## How The App Works
 
 The Flask route in `app/routes/products.py` reads the `page` and `q` query parameters from the browser URL.
