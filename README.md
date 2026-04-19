@@ -57,6 +57,16 @@ Then open:
 http://127.0.0.1:8000
 ```
 
+## CI Security Scan
+
+GitHub Actions builds the Docker image with the local CI tag:
+
+```text
+products-api-assignment:ci
+```
+
+The workflow scans that image with Trivy for operating system and Python library vulnerabilities. CI fails when Trivy finds `HIGH` or `CRITICAL` vulnerabilities. The image is scanned only inside CI and is not pushed to a registry.
+
 ## How The App Works
 
 The Flask route in `app/routes/products.py` reads the `page` and `q` query parameters from the browser URL.
