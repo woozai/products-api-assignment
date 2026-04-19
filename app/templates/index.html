@@ -6,7 +6,26 @@
   <h1>Products Assignment</h1>
 
   {% if error_message %}
-    <p>{{ error_message }}</p>
+    <p class="message message-error">{{ error_message }}</p>
+  {% endif %}
+
+  <form class="search-form" action="{{ url_for('products.show_products') }}" method="get">
+    <label class="search-label" for="product-search">Search products</label>
+    <div class="search-controls">
+      <input
+        class="search-input"
+        id="product-search"
+        name="q"
+        type="search"
+        value="{{ query }}"
+        placeholder="Search by product name"
+      >
+      <button class="search-button" type="submit">Search</button>
+    </div>
+  </form>
+
+  {% if empty_message %}
+    <p class="message">{{ empty_message }}</p>
   {% endif %}
 
   <p>
@@ -16,13 +35,13 @@
 
   <nav class="pagination" aria-label="Product pages">
     {% if pagination.prev_page %}
-      <a class="pagination-link" href="{{ url_for('products.show_products', page=pagination.prev_page, q=query) }}">Previous</a>
+      <a class="pagination-link" href="{{ url_for('products.show_products', page=pagination.prev_page, q=query or none) }}">Previous</a>
     {% endif %}
 
     <span class="pagination-status">Page {{ pagination.page }}</span>
 
     {% if pagination.next_page %}
-      <a class="pagination-link" href="{{ url_for('products.show_products', page=pagination.next_page, q=query) }}">Next</a>
+      <a class="pagination-link" href="{{ url_for('products.show_products', page=pagination.next_page, q=query or none) }}">Next</a>
     {% endif %}
   </nav>
 {% endblock %}
