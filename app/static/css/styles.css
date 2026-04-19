@@ -10,3 +10,22 @@ body {
   margin: 0 auto;
   padding: 32px 16px;
 }
+
+.pagination {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.pagination-link {
+  border: 1px solid #9aa5b1;
+  border-radius: 6px;
+  color: #102a43;
+  padding: 8px 12px;
+  text-decoration: none;
+}
+
+.pagination-status {
+  color: #52606d;
+}
