@@ -29,6 +29,14 @@ Open the local URL printed in the terminal, usually:
 http://127.0.0.1:5000
 ```
 
+## Run Tests
+
+Run the backend test suite:
+
+```bash
+uv run pytest
+```
+
 ## How The App Works
 
 The Flask route in `app/routes/products.py` reads the `page` and `q` query parameters from the browser URL.
@@ -56,7 +64,7 @@ Clicking the same Gallery button closes the gallery. Opening another product gal
 - Product data is not stored in a database; it is fetched from DummyJSON on request.
 - Small dataclass models are used to keep product and pagination data predictable.
 - The page size is fixed at 10 products per page.
-- Tests are not included because they were not explicitly requested.
+- Tests cover the main backend behavior and were added after being explicitly requested.
 
 ## Why These Choices
 
