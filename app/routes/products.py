@@ -30,7 +30,7 @@ def show_products():
         pagination = build_pagination(
             page=page,
             total=product_page.total,
-            limit=product_page.limit or PRODUCTS_PER_PAGE,
+            limit=PRODUCTS_PER_PAGE,
         )
         if product_page.total > 0 and page != pagination.page:
             return redirect(url_for("products.show_products", page=pagination.page, q=search_query or None))
