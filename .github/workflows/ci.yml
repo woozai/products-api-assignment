@@ -34,3 +34,16 @@ jobs:
 
       - name: Smoke check Flask routes
         run: uv run flask --app run routes
+
+      - name: Build Docker image
+        run: docker build -t flask-assignment .
+
+      - name: Run Docker container
+        run: |
+          docker run -d -p 8000:8000 --name flask-app flask-assignment
+          sleep 5
+          curl -f http://localhost:8000 || exit 1
+
+      - name: Stop Docker container
+        if: always()
+        run: docker stop flask-app && docker rm flask-app

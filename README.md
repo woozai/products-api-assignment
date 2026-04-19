@@ -37,6 +37,26 @@ Run the backend test suite:
 uv run pytest
 ```
 
+## Docker
+
+Build the container image:
+
+```bash
+docker build -t products-api-assignment .
+```
+
+Run the container:
+
+```bash
+docker run --rm -p 8000:8000 products-api-assignment
+```
+
+Then open:
+
+```text
+http://127.0.0.1:8000
+```
+
 ## How The App Works
 
 The Flask route in `app/routes/products.py` reads the `page` and `q` query parameters from the browser URL.
