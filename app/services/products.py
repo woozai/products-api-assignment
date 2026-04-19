@@ -5,6 +5,7 @@ import requests
 from app.models import Product, ProductPage
 from app.utils.type_casting import to_float, to_int, to_str, to_str_list
 
+# Keep the external API details in this service so routes and templates stay simple.
 DUMMYJSON_BASE_URL = "https://dummyjson.com"
 REQUEST_TIMEOUT_SECONDS = 5
 
@@ -20,17 +21,20 @@ def list_products(limit: int, skip: int = 0) -> ProductPage:
 
 def search_products(query: str, limit: int, skip: int = 0) -> ProductPage:
     """Search products through DummyJSON using backend request parameters."""
+    # DummyJSON uses q for search text, plus the same pagination params as listing.
     params = {"q": query.strip(), "limit": limit, "skip": skip}
     return _fetch_products("/products/search", params)
 
 
 def _fetch_products(path: str, params: dict[str, Any]) -> ProductPage:
+    # Both list and search responses should have products, total, skip, and limit.
     data = _get_json(path, params)
     products_data = data.get("products")
 
     if not isinstance(products_data, list):
         raise ProductServiceError("DummyJSON response did not include a products list.")
 
+    # Convert the API response into a stable shape for routes and templates.
     return ProductPage(
         products=[_normalize_product(item) for item in products_data],
         total=to_int(data.get("total")),
@@ -43,7 +47,9 @@ def _get_json(path: str, params: dict[str, Any]) -> dict[str, Any]:
     url = f"{DUMMYJSON_BASE_URL}{path}"
 
     try:
+        # A timeout keeps the Flask request from hanging if the external API stalls.
         response = requests.get(url, params=params, timeout=REQUEST_TIMEOUT_SECONDS)
+        # Turn 404/500/etc. into a controlled ProductServiceError.
         response.raise_for_status()
         data = response.json()
     except requests.RequestException as exc:
@@ -58,10 +64,11 @@ def _get_json(path: str, params: dict[str, Any]) -> dict[str, Any]:
 
 
 def _normalize_product(data: Any) -> Product:
+    # If DummyJSON returns a broken product item, keep rendering with safe defaults.
     if not isinstance(data, dict):
         data = {}
 
-    # Normalize optional API fields so templates can render safely.
+    # Normalize every field used by the table or gallery.
     return Product(
         id=to_int(data.get("id")),
         title=to_str(data.get("title"), "Untitled product"),
