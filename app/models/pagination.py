@@ -9,5 +9,5 @@ class Pagination:
     limit: int
     total: int
     total_pages: int
-    has_prev: bool
-    has_next: bool
+    prev_page: int | None = None
+    next_page: int | None = None

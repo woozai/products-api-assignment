@@ -4,5 +4,25 @@
 
 {% block content %}
   <h1>Products Assignment</h1>
-  <p>The Flask app is ready. Product data, search, pagination, and gallery behavior will be added in the next phases.</p>
+
+  {% if error_message %}
+    <p>{{ error_message }}</p>
+  {% endif %}
+
+  <p>
+    Showing page {{ pagination.page }} of {{ pagination.total_pages }}
+    for {{ pagination.total }} products.
+  </p>
+
+  <nav class="pagination" aria-label="Product pages">
+    {% if pagination.prev_page %}
+      <a class="pagination-link" href="{{ url_for('products.show_products', page=pagination.prev_page, q=query) }}">Previous</a>
+    {% endif %}
+
+    <span class="pagination-status">Page {{ pagination.page }}</span>
+
+    {% if pagination.next_page %}
+      <a class="pagination-link" href="{{ url_for('products.show_products', page=pagination.next_page, q=query) }}">Next</a>
+    {% endif %}
+  </nav>
 {% endblock %}
