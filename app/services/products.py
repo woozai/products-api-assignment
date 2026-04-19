@@ -1,8 +1,7 @@
 import logging
 from typing import Any
 
-import requests
-
+from app.clients import DummyJsonProductApiClient, ProductApiClientError
 from app.models import Product, ProductPage
 from app.utils.cache import build_products_cache_key, get_cached_value, set_cached_value
 from app.utils.type_casting import (
@@ -13,11 +12,8 @@ from app.utils.type_casting import (
     to_str,
 )
 
-# Keep the external API details in this service so routes and templates stay simple.
-DUMMYJSON_BASE_URL = "https://dummyjson.com"
-REQUEST_TIMEOUT_SECONDS = 5
-
 logger = logging.getLogger(__name__)
+product_api_client = DummyJsonProductApiClient()
 
 
 class ProductServiceError(RuntimeError):
@@ -76,24 +72,10 @@ def _fetch_products(path: str, params: dict[str, Any]) -> ProductPage:
 
 
 def _get_json(path: str, params: dict[str, Any]) -> dict[str, Any]:
-    url = f"{DUMMYJSON_BASE_URL}{path}"
-
     try:
-        # A timeout keeps the Flask request from hanging if the external API stalls.
-        logger.info("Calling DummyJSON API: %s params=%s", url, params)
-        response = requests.get(url, params=params, timeout=REQUEST_TIMEOUT_SECONDS)
-        # Turn 404/500/etc. into a controlled ProductServiceError.
-        response.raise_for_status()
-        data = response.json()
-    except requests.RequestException as exc:
-        raise ProductServiceError("Could not fetch products from DummyJSON.") from exc
-    except ValueError as exc:
-        raise ProductServiceError("DummyJSON returned invalid JSON.") from exc
-
-    if not isinstance(data, dict):
-        raise ProductServiceError("DummyJSON response was not an object.")
-
-    return data
+        return product_api_client.get_products(path, params)
+    except ProductApiClientError as exc:
+        raise ProductServiceError(str(exc)) from exc
 
 
 def _normalize_product(data: Any) -> Product:
