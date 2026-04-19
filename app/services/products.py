@@ -3,7 +3,13 @@ from typing import Any
 import requests
 
 from app.models import Product, ProductPage
-from app.utils.type_casting import to_float, to_int, to_str, to_str_list
+from app.utils.type_casting import (
+    to_float,
+    to_int,
+    to_safe_image_url,
+    to_safe_image_urls,
+    to_str,
+)
 
 # Keep the external API details in this service so routes and templates stay simple.
 DUMMYJSON_BASE_URL = "https://dummyjson.com"
@@ -78,6 +84,6 @@ def _normalize_product(data: Any) -> Product:
         stock=to_int(data.get("stock")),
         brand=to_str(data.get("brand")),
         category=to_str(data.get("category")),
-        thumbnail=to_str(data.get("thumbnail"), ""),
-        images=to_str_list(data.get("images")),
+        thumbnail=to_safe_image_url(data.get("thumbnail")),
+        images=to_safe_image_urls(data.get("images")),
     )

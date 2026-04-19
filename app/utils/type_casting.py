@@ -1,4 +1,5 @@
 from typing import Any
+from urllib.parse import urlparse
 
 
 def to_float(value: Any, default: float = 0.0) -> float:
@@ -32,3 +33,19 @@ def to_str_list(value: Any) -> list[str]:
         return []
 
     return [item.strip() for item in value if isinstance(item, str) and item.strip()]
+
+
+def to_safe_image_url(value: Any) -> str:
+    """Allow only http/https image URLs to be rendered in img src attributes."""
+    image_url = to_str(value, "")
+    parsed_url = urlparse(image_url)
+
+    if parsed_url.scheme in {"http", "https"} and parsed_url.netloc:
+        return image_url
+
+    return ""
+
+
+def to_safe_image_urls(value: Any) -> list[str]:
+    """Filter gallery image URLs so unsafe URL schemes are ignored."""
+    return [image_url for image_url in (to_safe_image_url(item) for item in to_str_list(value)) if image_url]

@@ -75,6 +75,25 @@ def test_product_normalization_uses_safe_fallbacks_for_missing_fields():
     assert product.images == []
 
 
+def test_product_normalization_filters_unsafe_image_urls():
+    product = product_service._normalize_product(
+        {
+            "thumbnail": "javascript:alert(1)",
+            "images": [
+                "https://example.com/product.jpg",
+                "data:text/html,<script>alert(1)</script>",
+                "http://example.com/extra.jpg",
+            ],
+        }
+    )
+
+    assert product.thumbnail == ""
+    assert product.images == [
+        "https://example.com/product.jpg",
+        "http://example.com/extra.jpg",
+    ]
+
+
 def test_service_raises_controlled_error_for_network_failure(monkeypatch):
     def fake_get(url, params, timeout):
         # Simulate a timeout from requests.
