@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request
+from flask import Blueprint, current_app, redirect, render_template, request, url_for
 
 from app.services.products import ProductServiceError, list_products, search_products
 from app.utils.pagination import PRODUCTS_PER_PAGE, build_pagination, calculate_skip, parse_page_number
@@ -19,8 +19,9 @@ def show_products():
             product_page = search_products(search_query, limit=PRODUCTS_PER_PAGE, skip=skip)
         else:
             product_page = list_products(limit=PRODUCTS_PER_PAGE, skip=skip)
-    except ProductServiceError:
+    except ProductServiceError as error:
         # Keep the page renderable if DummyJSON is temporarily unavailable.
+        current_app.logger.warning("Product service failed: %s", error)
         products = []
         pagination = build_pagination(page=1, total=0, limit=PRODUCTS_PER_PAGE)
         error_message = "Products are temporarily unavailable. Please try again later."
@@ -31,6 +32,9 @@ def show_products():
             total=product_page.total,
             limit=product_page.limit or PRODUCTS_PER_PAGE,
         )
+        if product_page.total > 0 and page != pagination.page:
+            return redirect(url_for("products.show_products", page=pagination.page, q=search_query or None))
+
         if not products:
             empty_message = _build_empty_message(search_query)
 
