@@ -2,8 +2,10 @@ import logging
 from typing import Any
 
 from app.clients import DummyJsonProductApiClient, ProductApiClientError
+from app.cache import CACHE_TTL_SECONDS, MemoryCacheBackend
+from app.interfaces import CacheBackend, ProductApiClient
 from app.models import Product, ProductPage
-from app.utils.cache import build_products_cache_key, get_cached_value, set_cached_value
+from app.utils.cache import build_products_cache_key
 from app.utils.type_casting import (
     to_float,
     to_int,
@@ -13,7 +15,8 @@ from app.utils.type_casting import (
 )
 
 logger = logging.getLogger(__name__)
-product_api_client = DummyJsonProductApiClient()
+cache_backend: CacheBackend = MemoryCacheBackend()
+product_api_client: ProductApiClient = DummyJsonProductApiClient()
 
 
 class ProductServiceError(RuntimeError):
@@ -41,7 +44,7 @@ def _fetch_products(path: str, params: dict[str, Any]) -> ProductPage:
         skip=to_int(params.get("skip")),
     )
     try:
-        cached_product_page = get_cached_value(cache_key)
+        cached_product_page = cache_backend.get(cache_key)
     except Exception:
         logger.warning("Cache read failed, falling back to DummyJSON.", exc_info=True)
         cached_product_page = None
@@ -64,7 +67,7 @@ def _fetch_products(path: str, params: dict[str, Any]) -> ProductPage:
         limit=to_int(data.get("limit")),
     )
     try:
-        set_cached_value(cache_key, product_page)
+        cache_backend.set(cache_key, product_page, CACHE_TTL_SECONDS)
     except Exception:
         logger.warning("Cache write failed, continuing without caching this response.", exc_info=True)
 
