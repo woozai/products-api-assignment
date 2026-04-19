@@ -103,6 +103,23 @@ body {
   padding: 8px 10px;
 }
 
+.gallery-row td {
+  background: #f0fdfa;
+}
+
+.gallery-content {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.gallery-image {
+  border-radius: 6px;
+  height: 140px;
+  object-fit: cover;
+  width: 140px;
+}
+
 .pagination {
   display: flex;
   align-items: center;
@@ -150,6 +167,10 @@ body {
     padding: 8px;
   }
 
+  .products-table .gallery-row {
+    background: #f0fdfa;
+  }
+
   .products-table td {
     border: 0;
     display: grid;
@@ -162,5 +183,13 @@ body {
     color: #52606d;
     content: attr(data-label);
     font-weight: 700;
+  }
+
+  .gallery-row td {
+    display: block;
+  }
+
+  .gallery-row td::before {
+    content: none;
   }
 }
