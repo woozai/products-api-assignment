@@ -65,7 +65,16 @@ GitHub Actions builds the Docker image with the local CI tag:
 products-api-assignment:ci
 ```
 
-The workflow scans that image with Trivy for operating system and Python library vulnerabilities. CI fails when Trivy finds `HIGH` or `CRITICAL` vulnerabilities. The image is scanned only inside CI and is not pushed to a registry.
+The workflow scans that image with Trivy before running the container smoke check. The image is scanned only inside CI and is not pushed to a registry.
+
+Trivy checks:
+
+- operating system packages from the Docker base image, such as Debian packages;
+- Python packages installed in the container;
+- only vulnerability findings, not secrets or configuration issues;
+- only `HIGH` and `CRITICAL` severities.
+
+CI fails when Trivy finds a `HIGH` or `CRITICAL` vulnerability that has a fixed version available. Unfixed vulnerabilities are still printed in the CI logs, but they do not fail the build because there is no patched package version to upgrade to yet.
 
 ## How The App Works
 

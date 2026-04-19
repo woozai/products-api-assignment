@@ -40,13 +40,17 @@ jobs:
 
       - name: Scan Docker image with Trivy
         run: |
+          # Fail on actionable high/critical vulnerabilities, but do not block on unfixed OS CVEs.
           docker run --rm \
             -v /var/run/docker.sock:/var/run/docker.sock \
             -v "${{ github.workspace }}/.cache/trivy:/root/.cache/" \
             aquasec/trivy:0.65.0 image \
-            --vuln-type os,library \
+            --scanners vuln \
+            --pkg-types os,library \
             --severity HIGH,CRITICAL \
             --format table \
+            --ignore-unfixed \
+            --skip-version-check \
             --exit-code 1 \
             products-api-assignment:ci
 

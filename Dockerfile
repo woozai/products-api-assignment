@@ -11,7 +11,7 @@ COPY --from=ghcr.io/astral-sh/uv:0.10.7 /uv /uvx /usr/local/bin/
 
 # Copy dependency files first so Docker can reuse this layer when app code changes.
 COPY pyproject.toml uv.lock ./
-RUN uv sync --locked --no-dev
+RUN uv sync --locked --no-dev && uv cache clean
 
 COPY app ./app
 COPY run.py ./
