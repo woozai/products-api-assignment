@@ -1,8 +1,10 @@
+import logging
 from typing import Any
 
 import requests
 
 from app.models import Product, ProductPage
+from app.utils.cache import build_products_cache_key, get_cached_value, set_cached_value
 from app.utils.type_casting import (
     to_float,
     to_int,
@@ -14,6 +16,8 @@ from app.utils.type_casting import (
 # Keep the external API details in this service so routes and templates stay simple.
 DUMMYJSON_BASE_URL = "https://dummyjson.com"
 REQUEST_TIMEOUT_SECONDS = 5
+
+logger = logging.getLogger(__name__)
 
 
 class ProductServiceError(RuntimeError):
@@ -33,6 +37,22 @@ def search_products(query: str, limit: int, skip: int = 0) -> ProductPage:
 
 
 def _fetch_products(path: str, params: dict[str, Any]) -> ProductPage:
+    api_mode = "search" if path.endswith("/search") else "list"
+    cache_key = build_products_cache_key(
+        api_mode,
+        query=to_str(params.get("q"), ""),
+        limit=to_int(params.get("limit")),
+        skip=to_int(params.get("skip")),
+    )
+    try:
+        cached_product_page = get_cached_value(cache_key)
+    except Exception:
+        logger.warning("Cache read failed, falling back to DummyJSON.", exc_info=True)
+        cached_product_page = None
+
+    if isinstance(cached_product_page, ProductPage):
+        return cached_product_page
+
     # Both list and search responses should have products, total, skip, and limit.
     data = _get_json(path, params)
     products_data = data.get("products")
@@ -41,12 +61,18 @@ def _fetch_products(path: str, params: dict[str, Any]) -> ProductPage:
         raise ProductServiceError("DummyJSON response did not include a products list.")
 
     # Convert the API response into a stable shape for routes and templates.
-    return ProductPage(
+    product_page = ProductPage(
         products=[_normalize_product(item) for item in products_data],
         total=to_int(data.get("total")),
         skip=to_int(data.get("skip")),
         limit=to_int(data.get("limit")),
     )
+    try:
+        set_cached_value(cache_key, product_page)
+    except Exception:
+        logger.warning("Cache write failed, continuing without caching this response.", exc_info=True)
+
+    return product_page
 
 
 def _get_json(path: str, params: dict[str, Any]) -> dict[str, Any]:
@@ -54,6 +80,7 @@ def _get_json(path: str, params: dict[str, Any]) -> dict[str, Any]:
 
     try:
         # A timeout keeps the Flask request from hanging if the external API stalls.
+        logger.info("Calling DummyJSON API: %s params=%s", url, params)
         response = requests.get(url, params=params, timeout=REQUEST_TIMEOUT_SECONDS)
         # Turn 404/500/etc. into a controlled ProductServiceError.
         response.raise_for_status()
