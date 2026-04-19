@@ -21,6 +21,9 @@ def show_products():
     skip = calculate_skip(page, PRODUCTS_PER_PAGE)
     error_message = None
     empty_message = None
+    current_app.logger.info(
+        "Product page requested: page=%s query=%s", page, search_query or ""
+    )
 
     try:
         # Search and pagination stay in Flask so JavaScript does not fetch products.
@@ -46,6 +49,11 @@ def show_products():
         )
         # Redirect impossible pages to the last real page instead of rendering empty data.
         if product_page.total > 0 and page != pagination.page:
+            current_app.logger.info(
+                "Redirecting out-of-range product page: requested=%s redirected=%s",
+                page,
+                pagination.page,
+            )
             return redirect(
                 url_for(
                     "products.show_products",

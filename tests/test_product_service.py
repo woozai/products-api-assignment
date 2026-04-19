@@ -1,6 +1,7 @@
 import pytest
 import requests
 
+from app.clients import dummyjson_client
 from app.services import products as product_service
 from app.services.products import ProductServiceError
 
@@ -32,14 +33,14 @@ def test_list_products_calls_dummyjson_with_pagination_params(monkeypatch):
         return FakeResponse({"products": [], "total": 0, "skip": 10, "limit": 10})
 
     # Replace requests.get so this test stays fast and does not call DummyJSON.
-    monkeypatch.setattr(product_service.requests, "get", fake_get)
+    monkeypatch.setattr(dummyjson_client.requests, "get", fake_get)
 
     product_page = product_service.list_products(limit=10, skip=10)
 
     # The service should call the list endpoint with backend pagination params.
     assert captured_request["url"] == "https://dummyjson.com/products"
     assert captured_request["params"] == {"limit": 10, "skip": 10}
-    assert captured_request["timeout"] == product_service.REQUEST_TIMEOUT_SECONDS
+    assert captured_request["timeout"] == dummyjson_client.REQUEST_TIMEOUT_SECONDS
     assert product_page.total == 0
 
 
@@ -53,14 +54,14 @@ def test_search_products_calls_dummyjson_search_endpoint(monkeypatch):
         captured_request["timeout"] = timeout
         return FakeResponse({"products": [], "total": 0, "skip": 0, "limit": 10})
 
-    monkeypatch.setattr(product_service.requests, "get", fake_get)
+    monkeypatch.setattr(dummyjson_client.requests, "get", fake_get)
 
     product_service.search_products(" phone ", limit=10, skip=0)
 
     # Search text is trimmed before it is sent as DummyJSON's q parameter.
     assert captured_request["url"] == "https://dummyjson.com/products/search"
     assert captured_request["params"] == {"q": "phone", "limit": 10, "skip": 0}
-    assert captured_request["timeout"] == product_service.REQUEST_TIMEOUT_SECONDS
+    assert captured_request["timeout"] == dummyjson_client.REQUEST_TIMEOUT_SECONDS
 
 
 def test_product_normalization_uses_safe_fallbacks_for_missing_fields():
@@ -99,10 +100,10 @@ def test_service_raises_controlled_error_for_network_failure(monkeypatch):
         # Simulate a timeout from requests.
         assert url == "https://dummyjson.com/products"
         assert params == {"limit": 10, "skip": 0}
-        assert timeout == product_service.REQUEST_TIMEOUT_SECONDS
+        assert timeout == dummyjson_client.REQUEST_TIMEOUT_SECONDS
         raise requests.Timeout("request timed out")
 
-    monkeypatch.setattr(product_service.requests, "get", fake_get)
+    monkeypatch.setattr(dummyjson_client.requests, "get", fake_get)
 
     # Routes catch ProductServiceError and show a friendly message to users.
     with pytest.raises(ProductServiceError):
@@ -114,10 +115,10 @@ def test_service_raises_controlled_error_for_bad_status(monkeypatch):
         # Simulate response.raise_for_status failing on a non-2xx response.
         assert url == "https://dummyjson.com/products"
         assert params == {"limit": 10, "skip": 0}
-        assert timeout == product_service.REQUEST_TIMEOUT_SECONDS
+        assert timeout == dummyjson_client.REQUEST_TIMEOUT_SECONDS
         return FakeResponse({}, status_error=requests.HTTPError("server error"))
 
-    monkeypatch.setattr(product_service.requests, "get", fake_get)
+    monkeypatch.setattr(dummyjson_client.requests, "get", fake_get)
 
     with pytest.raises(ProductServiceError):
         product_service.list_products(limit=10, skip=0)
@@ -128,10 +129,10 @@ def test_service_raises_controlled_error_for_invalid_response_shape(monkeypatch)
         # Missing products list means the API response is not usable by the app.
         assert url == "https://dummyjson.com/products"
         assert params == {"limit": 10, "skip": 0}
-        assert timeout == product_service.REQUEST_TIMEOUT_SECONDS
+        assert timeout == dummyjson_client.REQUEST_TIMEOUT_SECONDS
         return FakeResponse({"total": 1, "skip": 0, "limit": 10})
 
-    monkeypatch.setattr(product_service.requests, "get", fake_get)
+    monkeypatch.setattr(dummyjson_client.requests, "get", fake_get)
 
     with pytest.raises(ProductServiceError):
         product_service.list_products(limit=10, skip=0)

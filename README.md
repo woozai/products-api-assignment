@@ -100,6 +100,12 @@ The cache is intentionally simple:
 - the cache resets when Flask restarts;
 - the cache is not shared across multiple server processes or containers.
 
+## Code Structure
+
+The app uses small abstract base classes for replaceable backend pieces. `MemoryCacheBackend` currently handles caching, but it follows a cache interface so it can later be replaced by Redis with less product-service code change.
+
+`DummyJsonProductApiClient` currently handles product API calls, but it follows a product API client interface so another product API could be added later without changing routes or templates.
+
 ## Gallery Behavior
 
 Each product row has a `Gallery` button. The backend renders up to 3 image URLs into the button as HTML data attributes.
@@ -129,6 +135,7 @@ Clicking the same Gallery button closes the gallery. Opening another product gal
 - Dataclass models make API data easier to pass around without adding database or schema complexity.
 - Small utility functions keep pagination and type conversion reusable and easier to understand.
 - A small in-memory cache reduces repeated external API calls without adding Redis or another service for this assignment.
+- Abstract base classes keep the cache and product API client replaceable without adding a heavy framework.
 
 ## Known Limitations
 
