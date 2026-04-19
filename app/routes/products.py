@@ -1,7 +1,12 @@
 from flask import Blueprint, current_app, redirect, render_template, request, url_for
 
 from app.services.products import ProductServiceError, list_products, search_products
-from app.utils.pagination import PRODUCTS_PER_PAGE, build_pagination, calculate_skip, parse_page_number
+from app.utils.pagination import (
+    PRODUCTS_PER_PAGE,
+    build_pagination,
+    calculate_skip,
+    parse_page_number,
+)
 
 products_bp = Blueprint("products", __name__)
 
@@ -20,7 +25,9 @@ def show_products():
     try:
         # Search and pagination stay in Flask so JavaScript does not fetch products.
         if search_query:
-            product_page = search_products(search_query, limit=PRODUCTS_PER_PAGE, skip=skip)
+            product_page = search_products(
+                search_query, limit=PRODUCTS_PER_PAGE, skip=skip
+            )
         else:
             product_page = list_products(limit=PRODUCTS_PER_PAGE, skip=skip)
     except ProductServiceError as error:
@@ -39,7 +46,13 @@ def show_products():
         )
         # Redirect impossible pages to the last real page instead of rendering empty data.
         if product_page.total > 0 and page != pagination.page:
-            return redirect(url_for("products.show_products", page=pagination.page, q=search_query or None))
+            return redirect(
+                url_for(
+                    "products.show_products",
+                    page=pagination.page,
+                    q=search_query or None,
+                )
+            )
 
         # Empty search results are not an error, so they get a normal message.
         if not products:

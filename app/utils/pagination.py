@@ -31,7 +31,9 @@ def calculate_total_pages(total: int, limit: int = PRODUCTS_PER_PAGE) -> int:
     return ceil(total / limit)
 
 
-def build_pagination(page: int, total: int, limit: int = PRODUCTS_PER_PAGE) -> Pagination:
+def build_pagination(
+    page: int, total: int, limit: int = PRODUCTS_PER_PAGE
+) -> Pagination:
     total_pages = calculate_total_pages(total, limit)
     # Clamp the current page so out-of-range values can redirect to a real page.
     current_page = min(page, total_pages)
