@@ -33,6 +33,45 @@
     for {{ pagination.total }} products.
   </p>
 
+  {% if products %}
+    <div class="products-table-wrapper">
+      <table class="products-table">
+        <thead>
+          <tr>
+            <th scope="col">Title</th>
+            <th scope="col">Description</th>
+            <th scope="col">Price</th>
+            <th scope="col">Rating</th>
+            <th scope="col">Stock</th>
+            <th scope="col">Brand</th>
+            <th scope="col">Category</th>
+            <th scope="col">Thumbnail</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for product in products %}
+            <tr>
+              <td>{{ product.title }}</td>
+              <td>{{ product.description }}</td>
+              <td>${{ "%.2f"|format(product.price) }}</td>
+              <td>{{ "%.1f"|format(product.rating) }}</td>
+              <td>{{ product.stock }}</td>
+              <td>{{ product.brand }}</td>
+              <td>{{ product.category }}</td>
+              <td>
+                {% if product.thumbnail %}
+                  <img class="product-thumbnail" src="{{ product.thumbnail }}" alt="{{ product.title }} thumbnail">
+                {% else %}
+                  <span class="thumbnail-fallback">No image</span>
+                {% endif %}
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% endif %}
+
   <nav class="pagination" aria-label="Product pages">
     {% if pagination.prev_page %}
       <a class="pagination-link" href="{{ url_for('products.show_products', page=pagination.prev_page, q=query or none) }}">Previous</a>

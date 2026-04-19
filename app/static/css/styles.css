@@ -55,6 +55,42 @@ body {
   border-left-color: #c81e1e;
 }
 
+.products-table-wrapper {
+  overflow-x: auto;
+}
+
+.products-table {
+  background: #ffffff;
+  border-collapse: collapse;
+  min-width: 960px;
+  width: 100%;
+}
+
+.products-table th,
+.products-table td {
+  border: 1px solid #d9e2ec;
+  padding: 10px;
+  text-align: left;
+  vertical-align: top;
+}
+
+.products-table th {
+  background: #dbeafe;
+  color: #102a43;
+}
+
+.product-thumbnail {
+  border-radius: 6px;
+  display: block;
+  height: 64px;
+  object-fit: cover;
+  width: 64px;
+}
+
+.thumbnail-fallback {
+  color: #627d98;
+}
+
 .pagination {
   display: flex;
   align-items: center;
