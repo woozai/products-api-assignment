@@ -64,6 +64,17 @@ body {
   padding: 10px 14px;
 }
 
+.clear-search-link {
+  align-items: center;
+  border: 1px solid #9aa5b1;
+  border-radius: 6px;
+  color: #102a43;
+  display: inline-flex;
+  font: inherit;
+  padding: 10px 12px;
+  text-decoration: none;
+}
+
 .message {
   background: #eef2f7;
   border-left: 4px solid #627d98;

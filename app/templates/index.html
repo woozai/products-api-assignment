@@ -21,9 +21,12 @@
         name="q"
         type="search"
         value="{{ query }}"
-        placeholder="Search by product name"
+        placeholder="Search products by name"
       >
       <button class="search-button" type="submit">Search</button>
+      {% if query %}
+        <a class="clear-search-link" href="{{ url_for('products.show_products') }}">Clear search</a>
+      {% endif %}
     </div>
   </form>
 
