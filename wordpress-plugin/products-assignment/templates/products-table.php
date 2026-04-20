@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 ?>
 
 <div class="products-assignment">
-	<form class="products-assignment__search" method="get">
+	<form class="products-assignment__search" action="<?php echo esc_url( remove_query_arg( array( 'q', 'product_page' ) ) ); ?>" method="get">
 		<label for="products-assignment-search"><?php echo esc_html__( 'Search products', 'products-assignment' ); ?></label>
 		<input id="products-assignment-search" type="search" name="q" value="<?php echo esc_attr( $search_query ); ?>">
 		<button type="submit"><?php echo esc_html__( 'Search', 'products-assignment' ); ?></button>
@@ -33,10 +33,19 @@ if ( ! defined( 'ABSPATH' ) ) {
 					<th scope="col"><?php echo esc_html__( 'Brand', 'products-assignment' ); ?></th>
 					<th scope="col"><?php echo esc_html__( 'Category', 'products-assignment' ); ?></th>
 					<th scope="col"><?php echo esc_html__( 'Thumbnail', 'products-assignment' ); ?></th>
+					<th scope="col"><?php echo esc_html__( 'Gallery', 'products-assignment' ); ?></th>
 				</tr>
 			</thead>
 			<tbody>
 				<?php foreach ( $products as $product ) : ?>
+					<?php
+					$gallery_images      = isset( $product['images'] ) && is_array( $product['images'] ) ? array_values( $product['images'] ) : array();
+					$gallery_images_json = wp_json_encode( $gallery_images );
+
+					if ( false === $gallery_images_json ) {
+						$gallery_images_json = '[]';
+					}
+					?>
 					<tr>
 						<td><?php echo esc_html( $product['title'] ); ?></td>
 						<td><?php echo esc_html( $product['description'] ); ?></td>
@@ -52,6 +61,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 								<?php echo esc_html__( 'No image', 'products-assignment' ); ?>
 							<?php endif; ?>
 						</td>
+						<td>
+							<button
+								type="button"
+								class="products-assignment__gallery-button"
+								data-product-title="<?php echo esc_attr( $product['title'] ); ?>"
+								data-images="<?php echo esc_attr( $gallery_images_json ); ?>"
+								aria-expanded="false"
+							>
+								<?php echo esc_html__( 'Gallery', 'products-assignment' ); ?>
+							</button>
+						</td>
 					</tr>
 				<?php endforeach; ?>
 			</tbody>
@@ -64,18 +84,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 				<a href="<?php echo esc_url( $pagination['previous_url'] ); ?>"><?php echo esc_html__( 'Previous', 'products-assignment' ); ?></a>
 			<?php endif; ?>
 
-			<span>
-				<?php
-				echo esc_html(
-					sprintf(
-						/* translators: 1: current page number, 2: total pages. */
-						__( 'Page %1$d of %2$d', 'products-assignment' ),
-						$pagination['current_page'],
-						$pagination['total_pages']
-					)
-				);
-				?>
-			</span>
+			<?php foreach ( $pagination['page_urls'] as $page_number => $page_url ) : ?>
+				<?php if ( $page_number === $pagination['current_page'] ) : ?>
+					<span aria-current="page"><?php echo esc_html( $page_number ); ?></span>
+				<?php else : ?>
+					<a href="<?php echo esc_url( $page_url ); ?>"><?php echo esc_html( $page_number ); ?></a>
+				<?php endif; ?>
+			<?php endforeach; ?>
 
 			<?php if ( $pagination['has_next'] ) : ?>
 				<a href="<?php echo esc_url( $pagination['next_url'] ); ?>"><?php echo esc_html__( 'Next', 'products-assignment' ); ?></a>
