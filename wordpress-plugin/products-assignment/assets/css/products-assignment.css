@@ -1,6 +1,5 @@
 .products-assignment {
 	margin: 1.5rem 0;
-	overflow-x: auto;
 }
 
 .products-assignment__search {
@@ -53,17 +52,19 @@
 .products-assignment__table {
 	border-collapse: separate;
 	border-spacing: 0;
-	font-size: 0.95rem;
-	min-width: 1040px;
+	font-size: 0.82rem;
+	table-layout: fixed;
 	width: 100%;
 }
 
 .products-assignment__table th,
 .products-assignment__table td {
 	border: 1px solid #ddd;
-	padding: 0.55rem;
+	overflow-wrap: anywhere;
+	padding: 0.35rem;
 	text-align: left;
 	vertical-align: top;
+	word-break: normal;
 }
 
 .products-assignment__table th {
@@ -73,7 +74,7 @@
 
 .products-assignment__thumbnail {
 	height: auto;
-	max-width: 80px;
+	max-width: 56px;
 	vertical-align: middle;
 }
 
@@ -95,8 +96,8 @@
 }
 
 .products-assignment__gallery-button {
-	min-width: 72px;
-	white-space: nowrap;
+	font-size: 0.78rem;
+	padding: 0.35rem 0.45rem;
 }
 
 .products-assignment__gallery-row td {
