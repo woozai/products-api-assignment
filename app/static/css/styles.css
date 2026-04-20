@@ -104,12 +104,41 @@ body {
   background: #ffffff;
   border-collapse: collapse;
   min-width: 1040px;
+  table-layout: fixed;
   width: 100%;
+}
+
+.products-column-title {
+  width: 16%;
+}
+
+.products-column-description {
+  width: 27%;
+}
+
+.products-column-price,
+.products-column-rating,
+.products-column-stock {
+  width: 7%;
+}
+
+.products-column-brand,
+.products-column-category {
+  width: 9%;
+}
+
+.products-column-thumbnail {
+  width: 8%;
+}
+
+.products-column-gallery {
+  width: 10%;
 }
 
 .products-table th,
 .products-table td {
   border: 1px solid #d9e2ec;
+  overflow-wrap: anywhere;
   padding: 10px;
   text-align: left;
   vertical-align: top;
@@ -118,6 +147,26 @@ body {
 .products-table th {
   background: #dbeafe;
   color: #102a43;
+}
+
+.product-title-cell {
+  color: #102a43;
+  font-weight: 700;
+}
+
+.product-description-cell {
+  line-height: 1.5;
+}
+
+.product-number-cell {
+  color: #102a43;
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.product-thumbnail-cell {
+  overflow-wrap: normal;
 }
 
 .product-thumbnail {
@@ -140,6 +189,7 @@ body {
   cursor: pointer;
   font: inherit;
   padding: 8px 10px;
+  white-space: nowrap;
 }
 
 .gallery-row td {
@@ -197,6 +247,7 @@ body {
     border-collapse: separate;
     border-spacing: 0 12px;
     min-width: 0;
+    table-layout: auto;
   }
 
   .products-table thead {
@@ -220,6 +271,11 @@ body {
     gap: 8px;
     grid-template-columns: minmax(96px, 35%) 1fr;
     padding: 8px;
+  }
+
+  .product-description-cell {
+    line-height: 1.45;
+    max-width: none;
   }
 
   .products-table td::before {

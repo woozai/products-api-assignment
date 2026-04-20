@@ -42,6 +42,17 @@
   {% if products %}
     <div class="products-table-wrapper">
       <table class="products-table">
+        <colgroup>
+          <col class="products-column-title">
+          <col class="products-column-description">
+          <col class="products-column-price">
+          <col class="products-column-rating">
+          <col class="products-column-stock">
+          <col class="products-column-brand">
+          <col class="products-column-category">
+          <col class="products-column-thumbnail">
+          <col class="products-column-gallery">
+        </colgroup>
         <thead>
           <tr>
             <th scope="col">Title</th>
@@ -58,14 +69,14 @@
         <tbody>
           {% for product in products %}
             <tr>
-              <td data-label="Title">{{ product.title }}</td>
-              <td data-label="Description">{{ product.description }}</td>
-              <td data-label="Price">${{ "%.2f"|format(product.price) }}</td>
-              <td data-label="Rating">{{ "%.1f"|format(product.rating) }}</td>
-              <td data-label="Stock">{{ product.stock }}</td>
+              <td class="product-title-cell" data-label="Title">{{ product.title }}</td>
+              <td class="product-description-cell" data-label="Description">{{ product.description }}</td>
+              <td class="product-number-cell" data-label="Price">${{ "%.2f"|format(product.price) }}</td>
+              <td class="product-number-cell" data-label="Rating">{{ "%.1f"|format(product.rating) }}</td>
+              <td class="product-number-cell" data-label="Stock">{{ product.stock }}</td>
               <td data-label="Brand">{{ product.brand }}</td>
               <td data-label="Category">{{ product.category }}</td>
-              <td data-label="Thumbnail">
+              <td class="product-thumbnail-cell" data-label="Thumbnail">
                 {% if product.thumbnail %}
                   <img class="product-thumbnail" src="{{ product.thumbnail }}" alt="{{ product.title }} thumbnail">
                 {% else %}
