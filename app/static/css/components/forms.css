@@ -1,0 +1,58 @@
+/* Search form, input, button, and clear-link styles. */
+.search-form {
+  margin: 24px 0 16px;
+}
+
+.search-label {
+  display: block;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.search-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.search-input {
+  border: 1px solid #9aa5b1;
+  border-radius: 6px;
+  flex: 1;
+  font: inherit;
+  min-width: 220px;
+  padding: 10px 12px;
+}
+
+.search-button {
+  background: #166534;
+  border: 1px solid #166534;
+  border-radius: 6px;
+  color: #ffffff;
+  cursor: pointer;
+  font: inherit;
+  padding: 10px 14px;
+}
+
+.search-button:hover,
+.search-button:focus-visible {
+  background: #14532d;
+  border-color: #14532d;
+}
+
+.clear-search-link {
+  align-items: center;
+  border: 1px solid #9aa5b1;
+  border-radius: 6px;
+  color: #102a43;
+  display: inline-flex;
+  font: inherit;
+  padding: 10px 12px;
+  text-decoration: none;
+}
+
+.clear-search-link:hover,
+.clear-search-link:focus-visible {
+  background: #eef2f7;
+  border-color: #627d98;
+}

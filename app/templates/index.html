@@ -1,99 +1,23 @@
 {% extends "base.html" %}
 
-{% block title %}Products Assignment{% endblock %}
+{# Main product page that assembles the smaller UI components. #}
+{% block title %}Product Browser{% endblock %}
 
 {% block content %}
-  <h1>Products Assignment</h1>
 
-  {% if error_message %}
-    <p class="message message-error">{{ error_message }}</p>
-  {% endif %}
 
-  <form class="search-form" action="{{ url_for('products.show_products') }}" method="get">
-    <label class="search-label" for="product-search">Search products</label>
-    <div class="search-controls">
-      <input
-        class="search-input"
-        id="product-search"
-        name="q"
-        type="search"
-        value="{{ query }}"
-        placeholder="Search by product name"
-      >
-      <button class="search-button" type="submit">Search</button>
-    </div>
-  </form>
+{% include "components/page_header.html" %}
 
-  {% if empty_message %}
-    <p class="message">{{ empty_message }}</p>
-  {% endif %}
+{% include "components/messages.html" %}
 
-  <p>
-    Showing page {{ pagination.page }} of {{ pagination.total_pages }}
-    for {{ pagination.total }} products.
-  </p>
+{% include "components/search_form.html" %}
 
-  {% if products %}
-    <div class="products-table-wrapper">
-      <table class="products-table">
-        <thead>
-          <tr>
-            <th scope="col">Title</th>
-            <th scope="col">Description</th>
-            <th scope="col">Price</th>
-            <th scope="col">Rating</th>
-            <th scope="col">Stock</th>
-            <th scope="col">Brand</th>
-            <th scope="col">Category</th>
-            <th scope="col">Thumbnail</th>
-            <th scope="col">Gallery</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for product in products %}
-            <tr>
-              <td data-label="Title">{{ product.title }}</td>
-              <td data-label="Description">{{ product.description }}</td>
-              <td data-label="Price">${{ "%.2f"|format(product.price) }}</td>
-              <td data-label="Rating">{{ "%.1f"|format(product.rating) }}</td>
-              <td data-label="Stock">{{ product.stock }}</td>
-              <td data-label="Brand">{{ product.brand }}</td>
-              <td data-label="Category">{{ product.category }}</td>
-              <td data-label="Thumbnail">
-                {% if product.thumbnail %}
-                  <img class="product-thumbnail" src="{{ product.thumbnail }}" alt="{{ product.title }} thumbnail">
-                {% else %}
-                  <span class="thumbnail-fallback">No image</span>
-                {% endif %}
-              </td>
-              <td data-label="Gallery">
-                <button
-                  class="gallery-button"
-                  type="button"
-                  data-product-title="{{ product.title }}"
-                  data-product-images='{{ product.images[:3]|tojson }}'
-                >
-                  Gallery
-                </button>
-              </td>
-            </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    </div>
-  {% elif not error_message %}
-    <p class="message">No products are available to display.</p>
-  {% endif %}
 
-  <nav class="pagination" aria-label="Product pages">
-    {% if pagination.prev_page %}
-      <a class="pagination-link" href="{{ url_for('products.show_products', page=pagination.prev_page, q=query or none) }}">Previous</a>
-    {% endif %}
+{% include "components/results_status.html" %}
 
-    <span class="pagination-status">Page {{ pagination.page }}</span>
+{% include "components/pagination.html" %}
 
-    {% if pagination.next_page %}
-      <a class="pagination-link" href="{{ url_for('products.show_products', page=pagination.next_page, q=query or none) }}">Next</a>
-    {% endif %}
-  </nav>
+  {% include "components/product_table.html" %}
+
+  {% include "components/pagination.html" %}
 {% endblock %}

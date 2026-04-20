@@ -1,0 +1,26 @@
+/* Previous and next pagination control styles. */
+.pagination {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 28px;
+}
+
+.pagination-link {
+  border: 1px solid #9aa5b1;
+  border-radius: 6px;
+  color: #102a43;
+  padding: 8px 12px;
+  text-decoration: none;
+}
+
+.pagination-link:hover,
+.pagination-link:focus-visible {
+  background: #eef2f7;
+  border-color: #627d98;
+}
+
+.pagination-status {
+  color: #52606d;
+}

@@ -1,0 +1,12 @@
+{# Backend pagination links that preserve the active search query. #}
+<nav class="pagination" aria-label="Product pages">
+  {% if pagination.prev_page %}
+    <a class="pagination-link" href="{{ url_for('products.show_products', page=pagination.prev_page, q=query or none) }}">Previous</a>
+  {% endif %}
+
+  <span class="pagination-status">Page {{ pagination.page }}</span>
+
+  {% if pagination.next_page %}
+    <a class="pagination-link" href="{{ url_for('products.show_products', page=pagination.next_page, q=query or none) }}">Next</a>
+  {% endif %}
+</nav>

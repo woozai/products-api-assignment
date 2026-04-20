@@ -1,0 +1,27 @@
+{# One product row with normalized backend fields and gallery data for JavaScript. #}
+<tr>
+  <td class="product-title-cell" data-label="Title">{{ product.title }}</td>
+  <td class="product-description-cell" data-label="Description">{{ product.description }}</td>
+  <td class="product-number-cell" data-label="Price">${{ "%.2f"|format(product.price) }}</td>
+  <td class="product-number-cell" data-label="Rating">{{ "%.1f"|format(product.rating) }}</td>
+  <td class="product-number-cell" data-label="Stock">{{ product.stock }}</td>
+  <td data-label="Brand">{{ product.brand }}</td>
+  <td data-label="Category">{{ product.category }}</td>
+  <td class="product-thumbnail-cell" data-label="Thumbnail">
+    {% if product.thumbnail %}
+      <img class="product-thumbnail" src="{{ product.thumbnail }}" alt="{{ product.title }} thumbnail">
+    {% else %}
+      <span class="thumbnail-fallback">No image</span>
+    {% endif %}
+  </td>
+  <td data-label="Gallery">
+    <button
+      class="gallery-button"
+      type="button"
+      aria-label="View gallery for {{ product.title }}"
+      data-product-title="{{ product.title }}"
+      data-product-images='{{ product.images[:3]|tojson }}'
+    >
+    </button>
+  </td>
+</tr>

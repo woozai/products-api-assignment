@@ -1,0 +1,18 @@
+{# Backend search form that submits the user's query with the q parameter. #}
+<form class="search-form" action="{{ url_for('products.show_products') }}" method="get">
+  <label class="search-label" for="product-search">Search products</label>
+  <div class="search-controls">
+    <input
+      class="search-input"
+      id="product-search"
+      name="q"
+      type="search"
+      value="{{ query }}"
+      placeholder="Search products by name"
+    >
+    <button class="search-button" type="submit">Search</button>
+    {% if query %}
+      <a class="clear-search-link" href="{{ url_for('products.show_products') }}">Clear search</a>
+    {% endif %}
+  </div>
+</form>

@@ -1,4 +1,16 @@
 const openGalleryClass = 'gallery-row';
+const activeGalleryButtonClass = 'gallery-button-active';
+
+function resetGalleryButtons() {
+  document.querySelectorAll(`.${activeGalleryButtonClass}`).forEach((galleryButton) => {
+    galleryButton.classList.remove(activeGalleryButtonClass);
+    galleryButton.setAttribute('aria-expanded', 'false');
+    galleryButton.setAttribute(
+      'aria-label',
+      `View gallery for ${galleryButton.dataset.productTitle || 'product'}`,
+    );
+  });
+}
 
 function parseProductImages(galleryButton) {
   try {
@@ -19,6 +31,8 @@ function closeOpenGallery() {
   if (openGalleryRow) {
     openGalleryRow.remove();
   }
+
+  resetGalleryButtons();
 }
 
 function createGalleryImage(imageUrl, productTitle, imageIndex) {
@@ -32,17 +46,26 @@ function createGalleryImage(imageUrl, productTitle, imageIndex) {
 
 function createGalleryContent(productTitle, productImages) {
   const galleryContent = document.createElement('div');
+  const galleryHeading = document.createElement('h2');
+  const galleryImages = document.createElement('div');
+
   galleryContent.className = 'gallery-content';
+  galleryHeading.className = 'gallery-heading';
+  galleryHeading.textContent = `Images for ${productTitle}`;
+  galleryImages.className = 'gallery-images';
+  galleryContent.appendChild(galleryHeading);
 
   // Some products may not have extra images beyond the thumbnail.
   if (productImages.length === 0) {
-    galleryContent.textContent = 'No gallery images are available for this product.';
+    galleryImages.textContent = 'No gallery images are available for this product.';
+    galleryContent.appendChild(galleryImages);
     return galleryContent;
   }
 
   productImages.forEach((imageUrl, imageIndex) => {
-    galleryContent.appendChild(createGalleryImage(imageUrl, productTitle, imageIndex));
+    galleryImages.appendChild(createGalleryImage(imageUrl, productTitle, imageIndex));
   });
+  galleryContent.appendChild(galleryImages);
 
   return galleryContent;
 }
@@ -79,11 +102,18 @@ function toggleProductGallery(galleryButton) {
   }
 
   productRow.insertAdjacentElement('afterend', createGalleryRow(galleryButton));
+  galleryButton.classList.add(activeGalleryButtonClass);
+  galleryButton.setAttribute('aria-expanded', 'true');
+  galleryButton.setAttribute(
+    'aria-label',
+    `Hide gallery for ${galleryButton.dataset.productTitle || 'product'}`,
+  );
 }
 
 document.addEventListener('DOMContentLoaded', () => {
   // Attach listeners after the table has been rendered by Flask/Jinja.
   document.querySelectorAll('.gallery-button').forEach((galleryButton) => {
+    galleryButton.setAttribute('aria-expanded', 'false');
     galleryButton.addEventListener('click', () => toggleProductGallery(galleryButton));
   });
 });
