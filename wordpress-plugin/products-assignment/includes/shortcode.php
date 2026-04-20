@@ -17,10 +17,16 @@ function products_assignment_register_shortcode() {
 }
 
 /**
- * Renders a temporary shortcode placeholder until the product table is built.
+ * Renders a temporary shortcode placeholder until the product table UI is built.
  *
  * @return string
  */
 function products_assignment_render_shortcode() {
-	return '<div class="products-assignment"><p>' . esc_html__( 'Products assignment plugin is ready.', 'products-assignment' ) . '</p></div>';
+	$product_result = products_assignment_get_products( PRODUCTS_ASSIGNMENT_PAGE_SIZE, 0 );
+
+	if ( '' !== $product_result['error'] ) {
+		return '<div class="products-assignment"><p>' . esc_html( $product_result['error'] ) . '</p></div>';
+	}
+
+	return '<div class="products-assignment"><p>' . esc_html__( 'Products loaded successfully.', 'products-assignment' ) . '</p></div>';
 }

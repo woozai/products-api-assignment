@@ -152,4 +152,20 @@ The bonus plugin lives in `wordpress-plugin/products-assignment`.
 - On activation, the plugin reuses an existing `Compare Assignment` page when one exists.
 - If no matching page exists, activation creates a published `Compare Assignment` page with `[products_assignment]` as the content.
 - The page ID is stored in the `products_assignment_page_id` option so repeated activation does not create duplicate pages.
+- Product requests are isolated in `includes/dummyjson-api.php`, which chooses the DummyJSON list or search endpoint and returns friendly error text when the remote API fails.
 - Uninstall removes only the plugin-owned option and leaves the page and any user-edited content in place.
+
+### Phase 3: Product Data Layer
+
+- [x] Create `includes/dummyjson-api.php`.
+- [x] Define the DummyJSON base URL in one place.
+- [x] Use `/products` for normal listing.
+- [x] Use `/products/search` when `q` is not empty.
+- [x] Send `limit`, `skip`, and `q` through `add_query_arg()`.
+- [x] Fetch with `wp_remote_get()`.
+- [x] Set a short request timeout.
+- [x] Validate `WP_Error`, HTTP status, JSON parse result, and response shape.
+- [x] Return a predictable result array containing products, total, skip, limit, and optional error text.
+- [x] Do not expose raw remote error details to visitors.
+- [x] The shortcode can request products without knowing endpoint details.
+- [x] API failures become friendly UI messages instead of PHP warnings.

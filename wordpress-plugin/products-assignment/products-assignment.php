@@ -22,6 +22,7 @@ define( 'PRODUCTS_ASSIGNMENT_PAGE_OPTION', 'products_assignment_page_id' );
 define( 'PRODUCTS_ASSIGNMENT_PAGE_SIZE', 10 );
 
 require_once PRODUCTS_ASSIGNMENT_PATH . 'includes/activation.php';
+require_once PRODUCTS_ASSIGNMENT_PATH . 'includes/dummyjson-api.php';
 require_once PRODUCTS_ASSIGNMENT_PATH . 'includes/shortcode.php';
 
 register_activation_hook( __FILE__, 'products_assignment_activate' );
