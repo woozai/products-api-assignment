@@ -139,7 +139,17 @@ Clicking the same Gallery button closes the gallery. Opening another product gal
 
 ## Known Limitations
 
-- The optional WordPress plugin bonus is not implemented.
+- The optional WordPress plugin bonus currently includes shortcode registration and safe activation/uninstall behavior, but not the full product table UI yet.
 - The app depends on DummyJSON being available at runtime.
 - The in-memory cache is local to one Flask process and is cleared on restart.
 - There is no custom favicon, so browsers may request `/favicon.ico` and receive a harmless 404.
+
+## WordPress Plugin Bonus
+
+The bonus plugin lives in `wordpress-plugin/products-assignment`.
+
+- Activate `Products Assignment` in WordPress to register the `[products_assignment]` shortcode.
+- On activation, the plugin reuses an existing `Compare Assignment` page when one exists.
+- If no matching page exists, activation creates a published `Compare Assignment` page with `[products_assignment]` as the content.
+- The page ID is stored in the `products_assignment_page_id` option so repeated activation does not create duplicate pages.
+- Uninstall removes only the plugin-owned option and leaves the page and any user-edited content in place.
