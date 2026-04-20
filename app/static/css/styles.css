@@ -11,6 +11,24 @@ body {
   padding: 32px 16px;
 }
 
+.page-header {
+  margin-bottom: 24px;
+}
+
+.page-header h1 {
+  color: #102a43;
+  font-size: 2rem;
+  line-height: 1.2;
+  margin: 0 0 8px;
+}
+
+.page-intro {
+  color: #52606d;
+  line-height: 1.5;
+  margin: 0;
+  max-width: 680px;
+}
+
 .search-form {
   margin: 24px 0;
 }
@@ -55,6 +73,16 @@ body {
 .message-error {
   background: #fde8e8;
   border-left-color: #c81e1e;
+}
+
+.results-status {
+  background: #ffffff;
+  border: 1px solid #d9e2ec;
+  border-radius: 6px;
+  color: #334e68;
+  font-weight: 700;
+  margin: 0 0 16px;
+  padding: 10px 12px;
 }
 
 .products-table-wrapper {
@@ -143,6 +171,10 @@ body {
 @media (max-width: 760px) {
   .page {
     padding: 24px 12px;
+  }
+
+  .page-header h1 {
+    font-size: 1.75rem;
   }
 
   .products-table-wrapper {

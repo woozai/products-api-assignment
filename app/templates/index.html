@@ -1,9 +1,12 @@
 {% extends "base.html" %}
 
-{% block title %}Products Assignment{% endblock %}
+{% block title %}Product Browser{% endblock %}
 
 {% block content %}
-  <h1>Products Assignment</h1>
+  <header class="page-header">
+    <h1>Product Browser</h1>
+    <p class="page-intro">Search the product catalog, browse pages, and open product galleries.</p>
+  </header>
 
   {% if error_message %}
     <p class="message message-error">{{ error_message }}</p>
@@ -24,14 +27,14 @@
     </div>
   </form>
 
-  {% if empty_message %}
-    <p class="message">{{ empty_message }}</p>
-  {% endif %}
-
-  <p>
+  <p class="results-status">
     Showing page {{ pagination.page }} of {{ pagination.total_pages }}
     for {{ pagination.total }} products.
   </p>
+
+  {% if empty_message %}
+    <p class="message">{{ empty_message }}</p>
+  {% endif %}
 
   {% if products %}
     <div class="products-table-wrapper">
