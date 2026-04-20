@@ -53,23 +53,46 @@
 	border-collapse: separate;
 	border-spacing: 0;
 	font-size: 0.82rem;
-	table-layout: fixed;
+	table-layout: auto;
 	width: 100%;
 }
 
 .products-assignment__table th,
 .products-assignment__table td {
 	border: 1px solid #ddd;
-	overflow-wrap: anywhere;
+	overflow-wrap: normal;
+	word-wrap: normal;
+	white-space: normal;
+	word-break: normal;
 	padding: 0.35rem;
 	text-align: left;
 	vertical-align: top;
-	word-break: normal;
 }
 
 .products-assignment__table th {
 	background: #f3f3f3;
 	font-weight: 600;
+}
+
+.products-assignment__table th:nth-child(1),
+.products-assignment__table td:nth-child(1) {
+	min-width: 180px;
+}
+
+.products-assignment__table th:nth-child(2),
+.products-assignment__table td:nth-child(2) {
+	min-width: 240px;
+}
+
+.products-assignment__table th:nth-child(8),
+.products-assignment__table td:nth-child(8) {
+	white-space: nowrap;
+}
+
+.products-assignment__table th:nth-child(9),
+.products-assignment__table td:nth-child(9) {
+	width: 1%;
+	white-space: nowrap;
 }
 
 .products-assignment__thumbnail {
@@ -98,6 +121,10 @@
 .products-assignment__gallery-button {
 	font-size: 0.78rem;
 	padding: 0.35rem 0.45rem;
+	white-space: nowrap;
+	max-width: 100%;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 
 .products-assignment__gallery-row td {
