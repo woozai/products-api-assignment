@@ -146,50 +146,42 @@ Clicking the same Gallery button closes the gallery. Opening another product gal
 
 ## WordPress Plugin Bonus
 
-The optional WordPress bonus lives in:
+The optional WordPress plugin lives in:
 
 ```text
 wordpress-plugin/products-assignment/
 ```
 
-It is separate from the Flask app. The Flask setup above still uses `uv`, Flask, Jinja, and the Python service layer. The WordPress plugin should be inspected or run inside a WordPress install.
+It is separate from the Flask app and must be run inside a WordPress site.
 
-To install the plugin manually, copy this folder:
+To run it locally:
 
-```text
-wordpress-plugin/products-assignment/
-```
-
-into a WordPress site's plugins directory:
+1. Copy or symlink `wordpress-plugin/products-assignment/` into a WordPress plugins folder:
 
 ```text
 wp-content/plugins/products-assignment/
 ```
 
-You can also symlink the folder into `wp-content/plugins/` while developing, as long as WordPress sees the final plugin path as `wp-content/plugins/products-assignment/`.
-
-In WordPress admin, activate:
+2. In WordPress admin, activate:
 
 ```text
 Products Assignment
 ```
 
-On activation, the plugin creates or reuses a page titled:
+3. Open the generated page:
 
 ```text
 Compare Assignment
 ```
 
-The generated page contains this shortcode:
+The plugin creates or reuses that page on activation and inserts:
 
 ```text
 [products_assignment]
 ```
 
-You can also add `[products_assignment]` to any other WordPress page.
+You can also place `[products_assignment]` on any other page.
 
-The plugin handles DummyJSON requests in PHP. Search and pagination are parsed from the request in PHP, then sent to DummyJSON from the backend using `limit`, `skip`, and `q`. Browser JavaScript does not call DummyJSON.
+The plugin renders the product table through PHP. DummyJSON requests, search, and pagination are handled on the WordPress backend. The gallery JavaScript only opens images that PHP already rendered into HTML data attributes.
 
-The gallery JavaScript only reads image URLs that PHP already rendered into each product row's `data-` attributes. It opens and closes gallery rows in the browser, but it does not fetch product data.
-
-Uninstall removes only the plugin-owned page ID option. It does not delete the `Compare Assignment` page or user-edited page content.
+Uninstall removes only the plugin-owned option. It does not delete the generated page or user-edited content.
