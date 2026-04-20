@@ -31,3 +31,23 @@
 	gap: 1rem;
 	margin-top: 1rem;
 }
+
+.products-assignment__gallery-button {
+	min-width: 72px;
+}
+
+.products-assignment__gallery-row td {
+	background: #f8f8f8;
+}
+
+.products-assignment__gallery {
+	display: flex;
+	gap: 0.75rem;
+	min-height: 96px;
+}
+
+.products-assignment__gallery-image {
+	height: 96px;
+	object-fit: cover;
+	width: 96px;
+}
