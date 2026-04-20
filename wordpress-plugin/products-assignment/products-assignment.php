@@ -22,6 +22,7 @@ define( 'PRODUCTS_ASSIGNMENT_PAGE_OPTION', 'products_assignment_page_id' );
 define( 'PRODUCTS_ASSIGNMENT_PAGE_SIZE', 10 );
 
 require_once PRODUCTS_ASSIGNMENT_PATH . 'includes/activation.php';
+require_once PRODUCTS_ASSIGNMENT_PATH . 'includes/assets.php';
 require_once PRODUCTS_ASSIGNMENT_PATH . 'includes/products.php';
 require_once PRODUCTS_ASSIGNMENT_PATH . 'includes/pagination.php';
 require_once PRODUCTS_ASSIGNMENT_PATH . 'includes/dummyjson-api.php';

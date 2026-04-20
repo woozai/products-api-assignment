@@ -1,0 +1,33 @@
+.products-assignment {
+	margin: 1.5rem 0;
+}
+
+.products-assignment__search {
+	display: flex;
+	gap: 0.5rem;
+	margin-bottom: 1rem;
+}
+
+.products-assignment__table {
+	width: 100%;
+	border-collapse: collapse;
+}
+
+.products-assignment__table th,
+.products-assignment__table td {
+	border: 1px solid #ddd;
+	padding: 0.5rem;
+	text-align: left;
+	vertical-align: top;
+}
+
+.products-assignment__thumbnail {
+	height: auto;
+	max-width: 80px;
+}
+
+.products-assignment__pagination {
+	display: flex;
+	gap: 1rem;
+	margin-top: 1rem;
+}

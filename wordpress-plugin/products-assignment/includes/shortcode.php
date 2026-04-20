@@ -17,11 +17,13 @@ function products_assignment_register_shortcode() {
 }
 
 /**
- * Renders a temporary shortcode placeholder until the product table UI is built.
+ * Renders the products assignment shortcode.
  *
  * @return string
  */
 function products_assignment_render_shortcode() {
+	products_assignment_enqueue_assets();
+
 	$product_request = products_assignment_get_product_request();
 	$product_result  = products_assignment_get_products(
 		$product_request['limit'],
@@ -43,9 +45,35 @@ function products_assignment_render_shortcode() {
 		);
 	}
 
-	if ( '' !== $product_result['error'] ) {
-		return '<div class="products-assignment"><p>' . esc_html( $product_result['error'] ) . '</p></div>';
+	return products_assignment_render_template(
+		'products-table.php',
+		array(
+			'products'       => $product_result['products'],
+			'error'          => $product_result['error'],
+			'search_query'   => $product_request['search_query'],
+			'pagination'     => $pagination,
+			'product_result' => $product_result,
+		)
+	);
+}
+
+/**
+ * Renders a plugin template with prepared variables.
+ *
+ * @param string $template_name Template file name.
+ * @param array  $variables     Variables for the template.
+ * @return string
+ */
+function products_assignment_render_template( $template_name, $variables = array() ) {
+	$template_path = PRODUCTS_ASSIGNMENT_PATH . 'templates/' . $template_name;
+
+	if ( ! file_exists( $template_path ) ) {
+		return '';
 	}
 
-	return '<div class="products-assignment"><p>' . esc_html__( 'Products loaded successfully.', 'products-assignment' ) . '</p></div>';
+	extract( $variables, EXTR_SKIP );
+
+	ob_start();
+	include $template_path;
+	return ob_get_clean();
 }
