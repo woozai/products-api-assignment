@@ -65,6 +65,7 @@ function products_assignment_render_shortcode() {
  * @return string
  */
 function products_assignment_render_template( $template_name, $variables = array() ) {
+	$template_name = basename( $template_name );
 	$template_path = PRODUCTS_ASSIGNMENT_PATH . 'templates/' . $template_name;
 
 	if ( ! file_exists( $template_path ) ) {
