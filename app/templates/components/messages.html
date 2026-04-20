@@ -1,0 +1,4 @@
+{# Shows friendly page-level errors without exposing raw backend details. #}
+{% if error_message %}
+  <p class="message message-error">{{ error_message }}</p>
+{% endif %}

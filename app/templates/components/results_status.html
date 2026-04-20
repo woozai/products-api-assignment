@@ -1,0 +1,9 @@
+{# Displays current result count information and empty-result messages. #}
+<p class="results-status">
+  Showing page {{ pagination.page }} of {{ pagination.total_pages }}
+  for {{ pagination.total }} products.
+</p>
+
+{% if empty_message %}
+  <p class="message message-empty">{{ empty_message }}</p>
+{% endif %}

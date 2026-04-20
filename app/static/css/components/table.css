@@ -1,0 +1,87 @@
+/* Product table layout, columns, thumbnails, and readable cell styles. */
+.products-table-wrapper {
+  margin-top: 16px;
+  overflow-x: auto;
+}
+
+.products-table {
+  background: #ffffff;
+  border-collapse: collapse;
+  min-width: 1040px;
+  table-layout: fixed;
+  width: 100%;
+}
+
+.products-column-title {
+  width: 16%;
+}
+
+.products-column-description {
+  width: 24%;
+}
+
+.products-column-price,
+.products-column-rating,
+.products-column-stock {
+  width: 7%;
+}
+
+.products-column-brand,
+.products-column-category {
+  width: 10%;
+}
+
+.products-column-thumbnail {
+  width: 8%;
+}
+
+.products-column-gallery {
+  width: 8%;
+}
+
+.products-table th,
+.products-table td {
+  border: 1px solid #d9e2ec;
+  overflow-wrap: anywhere;
+  padding: 10px;
+  text-align: left;
+  vertical-align: top;
+}
+
+.products-table th {
+  background: #dbeafe;
+  color: #102a43;
+  white-space: nowrap;
+}
+
+.product-title-cell {
+  color: #102a43;
+  font-weight: 700;
+}
+
+.product-description-cell {
+  line-height: 1.5;
+}
+
+.product-number-cell {
+  color: #102a43;
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.product-thumbnail-cell {
+  overflow-wrap: normal;
+}
+
+.product-thumbnail {
+  border-radius: 6px;
+  display: block;
+  height: 64px;
+  object-fit: cover;
+  width: 64px;
+}
+
+.thumbnail-fallback {
+  color: #627d98;
+}

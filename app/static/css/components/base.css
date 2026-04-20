@@ -1,0 +1,20 @@
+/* Shared page defaults and focus styles used across the UI. */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  color: #1f2933;
+  background: #f6f8fa;
+}
+
+.search-input:focus-visible,
+.search-button:focus-visible,
+.clear-search-link:focus-visible,
+.gallery-button:focus-visible,
+.pagination-link:focus-visible {
+  outline: 3px solid #93c5fd;
+  outline-offset: 2px;
+}

@@ -1,0 +1,38 @@
+{# Product table wrapper that keeps the required assignment columns together. #}
+{% if products %}
+  <div class="products-table-wrapper">
+    <table class="products-table">
+      <colgroup>
+        <col class="products-column-title">
+        <col class="products-column-description">
+        <col class="products-column-price">
+        <col class="products-column-rating">
+        <col class="products-column-stock">
+        <col class="products-column-brand">
+        <col class="products-column-category">
+        <col class="products-column-thumbnail">
+        <col class="products-column-gallery">
+      </colgroup>
+      <thead>
+        <tr>
+          <th scope="col">Title</th>
+          <th scope="col">Description</th>
+          <th scope="col">Price</th>
+          <th scope="col">Rating</th>
+          <th scope="col">Stock</th>
+          <th scope="col">Brand</th>
+          <th scope="col">Category</th>
+          <th scope="col">Thumbnail</th>
+          <th scope="col">Gallery</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for product in products %}
+          {% include "components/product_row.html" %}
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% elif not error_message and not empty_message %}
+  <p class="message message-empty">No products are available to display.</p>
+{% endif %}
