@@ -113,7 +113,7 @@ body {
 }
 
 .products-column-description {
-  width: 27%;
+  width: 24%;
 }
 
 .products-column-price,
@@ -124,7 +124,7 @@ body {
 
 .products-column-brand,
 .products-column-category {
-  width: 9%;
+  width: 10%;
 }
 
 .products-column-thumbnail {
@@ -132,7 +132,7 @@ body {
 }
 
 .products-column-gallery {
-  width: 10%;
+  width: 8%;
 }
 
 .products-table th,
@@ -147,6 +147,7 @@ body {
 .products-table th {
   background: #dbeafe;
   color: #102a43;
+  white-space: nowrap;
 }
 
 .product-title-cell {
@@ -182,14 +183,40 @@ body {
 }
 
 .gallery-button {
+  align-items: center;
   background: #0f766e;
   border: 1px solid #0f766e;
   border-radius: 6px;
   color: #ffffff;
   cursor: pointer;
+  display: inline-flex;
   font: inherit;
-  padding: 8px 10px;
+  gap: 6px;
+  height: 36px;
+  justify-content: center;
+  padding: 0;
   white-space: nowrap;
+  width: 36px;
+}
+
+td[data-label="Gallery"] {
+  text-align: center;
+}
+
+.gallery-button::before {
+  content: "+";
+  font-size: 1.25rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.gallery-button-active {
+  background: #134e4a;
+  border-color: #134e4a;
+}
+
+.gallery-button-active::before {
+  content: "-";
 }
 
 .gallery-row td {
@@ -197,6 +224,17 @@ body {
 }
 
 .gallery-content {
+  display: grid;
+  gap: 12px;
+}
+
+.gallery-heading {
+  color: #134e4a;
+  font-size: 1rem;
+  margin: 0;
+}
+
+.gallery-images {
   display: flex;
   flex-wrap: wrap;
   gap: 12px;
