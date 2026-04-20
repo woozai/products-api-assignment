@@ -169,3 +169,15 @@ The bonus plugin lives in `wordpress-plugin/products-assignment`.
 - [x] Do not expose raw remote error details to visitors.
 - [x] The shortcode can request products without knowing endpoint details.
 - [x] API failures become friendly UI messages instead of PHP warnings.
+
+### Phase 4: Product Normalization
+
+- [x] Create `includes/products.php`.
+- [x] Normalize title, description, price, rating, stock, brand, category, thumbnail, and images.
+- [x] Provide clear fallbacks for missing fields.
+- [x] Cast numbers to predictable display values.
+- [x] Keep at most 3 gallery image URLs per product.
+- [x] Allow only `http` and `https` image URLs.
+- [x] Prefer thumbnail as a fallback gallery image when the image list is empty.
+- [x] The template never needs to inspect raw DummyJSON arrays directly.
+- [x] Missing or malformed product fields still render gracefully.

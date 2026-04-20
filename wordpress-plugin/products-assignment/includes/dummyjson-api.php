@@ -50,7 +50,7 @@ function products_assignment_get_products( $limit = PRODUCTS_ASSIGNMENT_PAGE_SIZ
 	}
 
 	return array(
-		'products' => $decoded_response['products'],
+		'products' => products_assignment_normalize_products( $decoded_response['products'] ),
 		'total'    => absint( $decoded_response['total'] ),
 		'skip'     => absint( $decoded_response['skip'] ),
 		'limit'    => absint( $decoded_response['limit'] ),
