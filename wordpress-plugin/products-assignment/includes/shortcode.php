@@ -22,7 +22,26 @@ function products_assignment_register_shortcode() {
  * @return string
  */
 function products_assignment_render_shortcode() {
-	$product_result = products_assignment_get_products( PRODUCTS_ASSIGNMENT_PAGE_SIZE, 0 );
+	$product_request = products_assignment_get_product_request();
+	$product_result  = products_assignment_get_products(
+		$product_request['limit'],
+		$product_request['skip'],
+		$product_request['search_query']
+	);
+	$pagination      = products_assignment_build_pagination(
+		$product_result['total'],
+		$product_request['limit'],
+		$product_request['current_page'],
+		$product_request['search_query']
+	);
+
+	if ( '' === $product_result['error'] && $pagination['current_page'] !== $product_request['current_page'] ) {
+		$product_result = products_assignment_get_products(
+			$product_request['limit'],
+			products_assignment_calculate_skip( $pagination['current_page'], $product_request['limit'] ),
+			$product_request['search_query']
+		);
+	}
 
 	if ( '' !== $product_result['error'] ) {
 		return '<div class="products-assignment"><p>' . esc_html( $product_result['error'] ) . '</p></div>';
