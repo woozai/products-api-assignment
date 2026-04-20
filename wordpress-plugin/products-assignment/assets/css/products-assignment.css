@@ -51,9 +51,10 @@
 }
 
 .products-assignment__table {
-	border-collapse: collapse;
+	border-collapse: separate;
+	border-spacing: 0;
 	font-size: 0.95rem;
-	min-width: 920px;
+	min-width: 1040px;
 	width: 100%;
 }
 
@@ -95,6 +96,7 @@
 
 .products-assignment__gallery-button {
 	min-width: 72px;
+	white-space: nowrap;
 }
 
 .products-assignment__gallery-row td {

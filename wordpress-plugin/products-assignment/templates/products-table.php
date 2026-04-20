@@ -84,13 +84,18 @@ if ( ! defined( 'ABSPATH' ) ) {
 				<a href="<?php echo esc_url( $pagination['previous_url'] ); ?>"><?php echo esc_html__( 'Previous', 'products-assignment' ); ?></a>
 			<?php endif; ?>
 
-			<?php foreach ( $pagination['page_urls'] as $page_number => $page_url ) : ?>
-				<?php if ( $page_number === $pagination['current_page'] ) : ?>
-					<span aria-current="page"><?php echo esc_html( $page_number ); ?></span>
-				<?php else : ?>
-					<a href="<?php echo esc_url( $page_url ); ?>"><?php echo esc_html( $page_number ); ?></a>
-				<?php endif; ?>
-			<?php endforeach; ?>
+			<span aria-current="page">
+				<?php
+				echo esc_html(
+					sprintf(
+						/* translators: 1: current page number, 2: total pages. */
+						__( 'Page %1$d of %2$d', 'products-assignment' ),
+						$pagination['current_page'],
+						$pagination['total_pages']
+					)
+				);
+				?>
+			</span>
 
 			<?php if ( $pagination['has_next'] ) : ?>
 				<a href="<?php echo esc_url( $pagination['next_url'] ); ?>"><?php echo esc_html__( 'Next', 'products-assignment' ); ?></a>
