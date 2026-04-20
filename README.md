@@ -139,18 +139,57 @@ Clicking the same Gallery button closes the gallery. Opening another product gal
 
 ## Known Limitations
 
-- The optional WordPress plugin bonus currently includes shortcode registration and safe activation/uninstall behavior, but not the full product table UI yet.
+- The optional WordPress plugin bonus is separate from the Flask app and must be installed in a WordPress site to run.
 - The app depends on DummyJSON being available at runtime.
 - The in-memory cache is local to one Flask process and is cleared on restart.
 - There is no custom favicon, so browsers may request `/favicon.ico` and receive a harmless 404.
 
 ## WordPress Plugin Bonus
 
-The bonus plugin lives in `wordpress-plugin/products-assignment`.
+The optional WordPress bonus lives in:
 
-- Activate `Products Assignment` in WordPress to register the `[products_assignment]` shortcode.
-- On activation, the plugin reuses an existing `Compare Assignment` page when one exists.
-- If no matching page exists, activation creates a published `Compare Assignment` page with `[products_assignment]` as the content.
-- The page ID is stored in the `products_assignment_page_id` option so repeated activation does not create duplicate pages.
-- Product requests are isolated in `includes/dummyjson-api.php`, which chooses the DummyJSON list or search endpoint and returns friendly error text when the remote API fails.
-- Uninstall removes only the plugin-owned option and leaves the page and any user-edited content in place.
+```text
+wordpress-plugin/products-assignment/
+```
+
+It is separate from the Flask app. The Flask setup above still uses `uv`, Flask, Jinja, and the Python service layer. The WordPress plugin should be inspected or run inside a WordPress install.
+
+To install the plugin manually, copy this folder:
+
+```text
+wordpress-plugin/products-assignment/
+```
+
+into a WordPress site's plugins directory:
+
+```text
+wp-content/plugins/products-assignment/
+```
+
+You can also symlink the folder into `wp-content/plugins/` while developing, as long as WordPress sees the final plugin path as `wp-content/plugins/products-assignment/`.
+
+In WordPress admin, activate:
+
+```text
+Products Assignment
+```
+
+On activation, the plugin creates or reuses a page titled:
+
+```text
+Compare Assignment
+```
+
+The generated page contains this shortcode:
+
+```text
+[products_assignment]
+```
+
+You can also add `[products_assignment]` to any other WordPress page.
+
+The plugin handles DummyJSON requests in PHP. Search and pagination are parsed from the request in PHP, then sent to DummyJSON from the backend using `limit`, `skip`, and `q`. Browser JavaScript does not call DummyJSON.
+
+The gallery JavaScript only reads image URLs that PHP already rendered into each product row's `data-` attributes. It opens and closes gallery rows in the browser, but it does not fetch product data.
+
+Uninstall removes only the plugin-owned page ID option. It does not delete the `Compare Assignment` page or user-edited page content.
