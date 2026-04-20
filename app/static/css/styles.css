@@ -78,12 +78,23 @@ body {
 .message {
   background: #eef2f7;
   border-left: 4px solid #627d98;
+  border-radius: 6px;
+  color: #334e68;
+  line-height: 1.5;
+  margin: 16px 0;
   padding: 12px;
 }
 
 .message-error {
   background: #fde8e8;
   border-left-color: #c81e1e;
+  color: #7f1d1d;
+}
+
+.message-empty {
+  background: #fff7ed;
+  border-left-color: #c2410c;
+  color: #7c2d12;
 }
 
 .results-status {

@@ -36,7 +36,7 @@
   </p>
 
   {% if empty_message %}
-    <p class="message">{{ empty_message }}</p>
+    <p class="message message-empty">{{ empty_message }}</p>
   {% endif %}
 
   {% if products %}
@@ -98,8 +98,8 @@
         </tbody>
       </table>
     </div>
-  {% elif not error_message %}
-    <p class="message">No products are available to display.</p>
+  {% elif not error_message and not empty_message %}
+    <p class="message message-empty">No products are available to display.</p>
   {% endif %}
 
   <nav class="pagination" aria-label="Product pages">
