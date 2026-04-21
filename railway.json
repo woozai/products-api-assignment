@@ -5,6 +5,7 @@
     "dockerfilePath": "Dockerfile"
   },
   "deploy": {
+    "startCommand": "sh -c 'uv run gunicorn run:app --bind 0.0.0.0:${PORT:-8000} --workers 2'",
     "healthcheckPath": "/",
     "restartPolicyType": "ON_FAILURE",
     "restartPolicyMaxRetries": 10
