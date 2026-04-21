@@ -139,7 +139,49 @@ Clicking the same Gallery button closes the gallery. Opening another product gal
 
 ## Known Limitations
 
-- The optional WordPress plugin bonus is not implemented.
+- The optional WordPress plugin bonus is separate from the Flask app and must be installed in a WordPress site to run.
 - The app depends on DummyJSON being available at runtime.
 - The in-memory cache is local to one Flask process and is cleared on restart.
 - There is no custom favicon, so browsers may request `/favicon.ico` and receive a harmless 404.
+
+## WordPress Plugin Bonus
+
+The optional WordPress plugin lives in:
+
+```text
+wordpress-plugin/products-assignment/
+```
+
+It is separate from the Flask app and must be run inside a WordPress site.
+
+To run it locally:
+
+1. Copy or symlink `wordpress-plugin/products-assignment/` into a WordPress plugins folder:
+
+```text
+wp-content/plugins/products-assignment/
+```
+
+2. In WordPress admin, activate:
+
+```text
+Products Assignment
+```
+
+3. Open the generated page:
+
+```text
+Compare Assignment
+```
+
+The plugin creates or reuses that page on activation and inserts:
+
+```text
+[products_assignment]
+```
+
+You can also place `[products_assignment]` on any other page.
+
+The plugin renders the product table through PHP. DummyJSON requests, search, and pagination are handled on the WordPress backend. The gallery JavaScript only opens images that PHP already rendered into HTML data attributes.
+
+Uninstall removes only the plugin-owned option. It does not delete the generated page or user-edited content.

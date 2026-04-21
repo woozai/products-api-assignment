@@ -16,7 +16,6 @@ function parseProductImages(galleryButton) {
   try {
     // Images are rendered by Jinja so the browser never calls DummyJSON directly.
     const productImages = JSON.parse(galleryButton.dataset.productImages || '[]');
-    // The assignment asks for up to 3 gallery images.
     return productImages.slice(0, 3);
   } catch {
     // Bad data should show the fallback message instead of breaking the click.
