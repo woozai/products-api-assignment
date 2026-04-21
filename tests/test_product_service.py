@@ -65,11 +65,20 @@ def test_search_products_calls_dummyjson_search_endpoint(monkeypatch):
 
 
 def test_product_normalization_uses_safe_fallbacks_for_missing_fields():
-    # An empty product object should still produce values the template can render.
-    product = product_service._normalize_product({})
+    # Products without a valid ID should be rejected instead of inventing one.
+    with pytest.raises(product_service.ProductNormalizationError):
+        product_service._normalize_product({})
+
+
+def test_product_normalization_preserves_missing_numeric_values():
+    # Missing numeric business fields should stay unknown instead of becoming zero.
+    product = product_service._normalize_product({"id": 1})
 
     assert product.title == "Untitled product"
     assert product.description == "No description available."
+    assert product.price is None
+    assert product.rating is None
+    assert product.stock is None
     assert product.brand == "N/A"
     assert product.category == "N/A"
     assert product.thumbnail == ""
@@ -79,6 +88,7 @@ def test_product_normalization_uses_safe_fallbacks_for_missing_fields():
 def test_product_normalization_filters_unsafe_image_urls():
     product = product_service._normalize_product(
         {
+            "id": 1,
             "thumbnail": "javascript:alert(1)",
             "images": [
                 "https://example.com/product.jpg",
@@ -136,3 +146,27 @@ def test_service_raises_controlled_error_for_invalid_response_shape(monkeypatch)
 
     with pytest.raises(ProductServiceError):
         product_service.list_products(limit=10, skip=0)
+
+
+def test_service_skips_products_with_invalid_required_identity_fields(monkeypatch):
+    def fake_get(url, params, timeout):
+        assert url == "https://dummyjson.com/products"
+        assert params == {"limit": 10, "skip": 0}
+        assert timeout == dummyjson_client.REQUEST_TIMEOUT_SECONDS
+        return FakeResponse(
+            {
+                "products": [
+                    {"id": "bad", "title": "Broken"},
+                    {"id": 2, "title": "Valid product"},
+                ],
+                "total": 2,
+                "skip": 0,
+                "limit": 10,
+            }
+        )
+
+    monkeypatch.setattr(dummyjson_client.requests, "get", fake_get)
+
+    product_page = product_service.list_products(limit=10, skip=0)
+
+    assert [product.id for product in product_page.products] == [2]

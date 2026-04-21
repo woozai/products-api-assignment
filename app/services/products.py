@@ -7,8 +7,9 @@ from app.interfaces import CacheBackend, ProductApiClient
 from app.models import Product, ProductPage
 from app.utils.cache import build_products_cache_key
 from app.utils.type_casting import (
-    to_float,
-    to_int,
+    to_int_or_default,
+    to_optional_float,
+    to_optional_int,
     to_safe_image_url,
     to_safe_image_urls,
     to_str,
@@ -21,6 +22,10 @@ product_api_client: ProductApiClient = DummyJsonProductApiClient()
 
 class ProductServiceError(RuntimeError):
     """Raised when DummyJSON cannot return usable product data."""
+
+
+class ProductNormalizationError(ValueError):
+    """Raised when a single product item is missing required identity data."""
 
 
 def list_products(limit: int, skip: int = 0) -> ProductPage:
@@ -40,8 +45,8 @@ def _fetch_products(path: str, params: dict[str, Any]) -> ProductPage:
     cache_key = build_products_cache_key(
         api_mode,
         query=to_str(params.get("q"), ""),
-        limit=to_int(params.get("limit")),
-        skip=to_int(params.get("skip")),
+        limit=to_int_or_default(params.get("limit")),
+        skip=to_int_or_default(params.get("skip")),
     )
     try:
         cached_product_page = cache_backend.get(cache_key)
@@ -60,16 +65,30 @@ def _fetch_products(path: str, params: dict[str, Any]) -> ProductPage:
         raise ProductServiceError("DummyJSON response did not include a products list.")
 
     # Convert the API response into a stable shape for routes and templates.
+    normalized_products = []
+    for item in products_data:
+        try:
+            normalized_products.append(_normalize_product(item))
+        except ProductNormalizationError:
+            logger.warning(
+                "Skipping product with invalid required fields.",
+                extra={"product_data": item},
+                exc_info=True,
+            )
+
     product_page = ProductPage(
-        products=[_normalize_product(item) for item in products_data],
-        total=to_int(data.get("total")),
-        skip=to_int(data.get("skip")),
-        limit=to_int(data.get("limit")),
+        products=normalized_products,
+        total=to_int_or_default(data.get("total")),
+        skip=to_int_or_default(data.get("skip")),
+        limit=to_int_or_default(data.get("limit")),
     )
     try:
         cache_backend.set(cache_key, product_page, CACHE_TTL_SECONDS)
     except Exception:
-        logger.warning("Cache write failed, continuing without caching this response.", exc_info=True)
+        logger.warning(
+            "Cache write failed, continuing without caching this response.",
+            exc_info=True,
+        )
 
     return product_page
 
@@ -82,18 +101,22 @@ def _get_json(path: str, params: dict[str, Any]) -> dict[str, Any]:
 
 
 def _normalize_product(data: Any) -> Product:
-    # If DummyJSON returns a broken product item, keep rendering with safe defaults.
+    # Products without a valid ID cannot be safely identified in the UI or future logic.
     if not isinstance(data, dict):
-        data = {}
+        raise ProductNormalizationError("Product item must be a dictionary.")
+
+    product_id = to_optional_int(data.get("id"))
+    if product_id is None:
+        raise ProductNormalizationError("Product item is missing a valid integer id.")
 
     # Normalize every field used by the table or gallery.
     return Product(
-        id=to_int(data.get("id")),
+        id=product_id,
         title=to_str(data.get("title"), "Untitled product"),
         description=to_str(data.get("description"), "No description available."),
-        price=to_float(data.get("price")),
-        rating=to_float(data.get("rating")),
-        stock=to_int(data.get("stock")),
+        price=to_optional_float(data.get("price")),
+        rating=to_optional_float(data.get("rating")),
+        stock=to_optional_int(data.get("stock")),
         brand=to_str(data.get("brand")),
         category=to_str(data.get("category")),
         thumbnail=to_safe_image_url(data.get("thumbnail")),

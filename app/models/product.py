@@ -8,9 +8,9 @@ class Product:
     id: int
     title: str
     description: str
-    price: float
-    rating: float
-    stock: int
+    price: float | None
+    rating: float | None
+    stock: int | None
     brand: str
     category: str
     thumbnail: str
