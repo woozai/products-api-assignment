@@ -101,6 +101,15 @@ The route reads `page` and `q` from the browser URL, then calls the service laye
 
 Products with invalid `id` values are skipped, while missing numeric fields like price, rating, and stock are shown as `N/A` instead of fake zero values. The Jinja templates render the table, messages, and pagination links from that normalized data.
 
+## Project Flow
+
+1. The browser sends a request to the Flask route with optional `page` and `q` query parameters.
+2. The route calculates pagination values and calls the product service.
+3. The service checks the in-memory cache, then calls DummyJSON if needed.
+4. The DummyJSON response is validated and normalized into `Product` and `ProductPage` objects.
+5. Flask passes that normalized data to the Jinja templates.
+6. The browser receives fully rendered HTML, and the gallery JavaScript enhances only the image-row interaction.
+
 ## Backend Cache
 
 Successful DummyJSON responses are cached in memory for 60 seconds per Flask process. Cache keys include the request mode, search query, page size, and skip value, so listing, search, and pagination states are cached separately.
@@ -148,7 +157,7 @@ Clicking the same button closes the gallery, and opening a different one closes 
 
 ## WordPress Plugin Bonus
 
-The optional WordPress plugin lives in:
+The WordPress plugin lives in:
 
 ```text
 wordpress-plugin/products-assignment/
