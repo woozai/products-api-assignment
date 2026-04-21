@@ -141,10 +141,10 @@ When clicked:
 |   `-- test_products_route.py
 |-- wordpress-plugin/
 |   `-- products-assignment/
-|-- CODE_STUDY_ROADMAP.md
 |-- Dockerfile
 |-- README.md
-|-- SPEC.md
+|-- docs/
+|   `-- SPEC.md
 |-- pyproject.toml
 |-- run.py
 `-- uv.lock
