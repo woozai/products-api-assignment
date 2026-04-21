@@ -7,6 +7,30 @@ Flask web application for the DummyJSON products assignment. The app renders a p
 - Python 3.13.12
 - uv
 
+## Quick Start For Reviewers
+
+From the project root, run the script for your platform.
+
+Windows:
+
+```powershell
+.\dev.ps1
+```
+
+or:
+
+```bat
+dev.bat
+```
+
+macOS or Linux:
+
+```bash
+./dev.sh
+```
+
+These scripts install dependencies from `uv.lock` and start the app at `http://127.0.0.1:5000`.
+
 ## Installation
 
 Install the project dependencies from the lockfile:
@@ -20,7 +44,7 @@ uv sync
 Start the Flask development server:
 
 ```bash
-uv run flask --app run run
+uv run flask --app run --debug run
 ```
 
 Open the local URL printed in the terminal, usually:
@@ -56,6 +80,12 @@ Then open:
 ```text
 http://127.0.0.1:8000
 ```
+
+## Railway Deployment
+
+Railway deployment is configured in `railway.json` to build from the root `Dockerfile`.
+
+The production container runs the app with Gunicorn and binds to Railway's injected `PORT` value instead of using Flask's development server.
 
 ## CI Security Scan
 
