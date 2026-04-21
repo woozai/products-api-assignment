@@ -230,11 +230,3 @@ instance/
 Thumbs.db
 
 # Local AI planning/guidance files
-.codex/
-AGENTS.md
-SPEC.md
-TASKS.md
-CACHE_TASKS.md
-ABC_TASKS.md
-UI_REFACTOR_TASKS.md
-WORDPRESS_PLUGIN_TASKS.md
