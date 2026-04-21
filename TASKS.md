@@ -7,7 +7,6 @@
 - [x] Add Flask dependency with `uv add flask`.
 - [x] Add backend HTTP dependency, such as `uv add requests`.
 - [x] Add test dependency only if tests are explicitly requested.
-- [x] Add lint/format tools if desired, such as `ruff`.
 - [x] Create the base project structure.
 - [x] Confirm `uv run flask --app app run` can start the app.
 
