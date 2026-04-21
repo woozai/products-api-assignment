@@ -4,6 +4,8 @@ Flask web application for the DummyJSON products assignment. The app renders a p
 
 Live demo: https://products-api-assignment-production.up.railway.app
 
+The interface is responsive and supports both desktop and mobile layouts.
+
 ## Prerequisites
 
 - Python 3.13.12
@@ -102,6 +104,36 @@ The route reads `page` and `q` from the browser URL, then calls the service laye
 Products with invalid `id` values are skipped, while missing numeric fields like price, rating, and stock are shown as `N/A` instead of fake zero values. The Jinja templates render the table, messages, and pagination links from that normalized data.
 
 ## Project Flow
+
+```mermaid
+sequenceDiagram
+    participant Browser
+    participant Route as Flask Route
+    participant Service as Product Service
+    participant Cache as Memory Cache
+    participant API as DummyJSON API
+    participant Template as Jinja Templates
+    participant JS as Gallery JavaScript
+
+    Browser->>Route: GET /?page=&q=
+    Route->>Service: list/search products
+    Service->>Cache: read cached page
+
+    alt cache hit
+        Cache-->>Service: cached normalized data
+    else cache miss
+        Service->>API: request products/search
+        API-->>Service: raw product response
+        Service->>Service: validate and normalize
+        Service->>Cache: store successful result
+    end
+
+    Service-->>Route: ProductPage
+    Route->>Template: render page
+    Template-->>Browser: HTML response
+    Browser->>JS: Gallery button click
+    JS-->>Browser: insert gallery row
+```
 
 1. The browser sends a request to the Flask route with optional `page` and `q` query parameters.
 2. The route calculates pagination values and calls the product service.
