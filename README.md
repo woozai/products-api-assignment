@@ -1,6 +1,6 @@
 # Products API Assignment
 
-Flask web application for the DummyJSON products assignment. The app renders a product table with backend-powered search, backend pagination, thumbnail images, and a vanilla JavaScript image gallery.
+Flask app for the DummyJSON products assignment. It renders a responsive product table with backend search, backend pagination, thumbnails, and a small vanilla JavaScript gallery.
 
 Live demo: https://products-api-assignment-production.up.railway.app (available until May 21, 2026)
 
@@ -35,19 +35,12 @@ If needed, make the shell script executable once with `chmod +x dev.sh`.
 
 These scripts install dependencies from `uv.lock` and start the app at `http://127.0.0.1:5000`.
 
-## Installation
+## Manual Run
 
-Install the project dependencies from the lockfile:
+If you prefer to run it without the helper scripts:
 
 ```bash
 uv sync
-```
-
-## Run Locally
-
-Start the Flask development server:
-
-```bash
 uv run flask --app run --debug run
 ```
 
@@ -87,9 +80,7 @@ http://127.0.0.1:8000
 
 ## Railway Deployment
 
-Railway deployment is configured in `railway.json` to build from the root `Dockerfile`.
-
-The production container runs the app with Gunicorn, binds to Railway's injected `PORT` value, and avoids Flask's development server.
+Railway is configured to build from the root `Dockerfile` and run the app with Gunicorn in production.
 
 ## CI Security Scan
 
@@ -97,18 +88,9 @@ GitHub Actions scans the CI Docker image with Trivy and fails the build only for
 
 ## How The App Works
 
-The route reads `page` and `q` from the browser URL, then calls the service layer to either list products or search DummyJSON from the backend. Pagination is converted into DummyJSON `skip` and `limit` parameters, and the response is normalized before rendering.
+The browser sends `page` and `q` query parameters to the Flask route. The route calls a service layer that handles pagination, optional caching, and the DummyJSON request. The response is normalized into predictable models before Jinja renders the final HTML.
 
-Products with invalid `id` values are skipped, while missing numeric fields like price, rating, and stock are shown as `N/A` instead of fake zero values. The Jinja templates render the table, messages, and pagination links from that normalized data.
-
-## Project Flow
-
-1. The browser sends a request to the Flask route with optional `page` and `q` query parameters.
-2. The route calculates pagination values and calls the product service.
-3. The service checks the in-memory cache, then calls DummyJSON if needed.
-4. The DummyJSON response is validated and normalized into `Product` and `ProductPage` objects.
-5. Flask passes that normalized data to the Jinja templates.
-6. The browser receives fully rendered HTML, and the gallery JavaScript enhances only the image-row interaction.
+Products with invalid `id` values are skipped, and missing numeric fields such as price, rating, and stock are shown as `N/A` instead of fake zero values. The frontend JavaScript only enhances the gallery interaction and does not fetch product data.
 
 ## Backend Cache
 
@@ -116,17 +98,9 @@ Successful DummyJSON responses are cached in memory for 60 seconds per Flask pro
 
 Failed responses are not cached, the cache resets on restart, and it is intentionally local to a single process.
 
-## Code Structure
-
-The app uses small abstract base classes for replaceable backend pieces. `MemoryCacheBackend` currently handles caching, but it follows a cache interface so it can later be replaced by Redis with less product-service code change.
-
-`DummyJsonProductApiClient` currently handles product API calls, but it follows a product API client interface so another product API could be added later without changing routes or templates.
-
 ## Gallery Behavior
+Each row has a Gallery button with up to 3 backend-rendered image URLs. Vanilla JavaScript opens the gallery below the selected row without making any browser-side API requests.
 
-Each product row includes a `Gallery` button with up to 3 backend-rendered image URLs stored in data attributes. Vanilla JavaScript reads those values and inserts a gallery row directly below the clicked product without making any browser-side API requests.
-
-Clicking the same button closes the gallery, and opening a different one closes the previous gallery first.
 
 ## Assumptions And Decisions
 
@@ -144,6 +118,7 @@ Clicking the same button closes the gallery, and opening a different one closes 
 
 - Flask and Jinja keep the app small, readable, and close to the assignment requirements.
 - A separate service layer keeps DummyJSON integration, normalization, and routes cleanly separated.
+- Small interfaces keep the cache and API client replaceable without changing route or template code.
 - Vanilla JavaScript is enough for the gallery behavior without adding unnecessary frontend complexity.
 - `uv` and the Docker setup make local development, CI, and deployment consistent.
 - The lightweight in-memory cache reduces repeated API calls without adding extra infrastructure for a small assignment.
@@ -153,7 +128,6 @@ Clicking the same button closes the gallery, and opening a different one closes 
 - The optional WordPress plugin bonus is separate from the Flask app and must be installed in a WordPress site to run.
 - The app depends on DummyJSON being available at runtime.
 - The in-memory cache is local to one Flask process and is cleared on restart.
-- There is no custom favicon, so browsers may request `/favicon.ico` and receive a harmless 404.
 
 ## WordPress Plugin Bonus
 
@@ -192,8 +166,6 @@ The plugin creates or reuses that page on activation and inserts:
 ```text
 [products_assignment]
 ```
-
-You can also place `[products_assignment]` on any other page.
 
 The plugin renders the product table through PHP. DummyJSON requests, search, and pagination are handled on the WordPress backend. The gallery JavaScript only opens images that PHP already rendered into HTML data attributes.
 
