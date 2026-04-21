@@ -104,23 +104,18 @@ Each row has a Gallery button with up to 3 backend-rendered image URLs. Vanilla 
 
 ## Assumptions And Decisions
 
-- Flask was chosen for the backend implementation.
 - The project uses `uv` for dependency management and local commands.
 - API calls, search, and pagination stay in the backend, not frontend JavaScript.
 - The UI uses Jinja, plain CSS, and vanilla JavaScript only.
 - Product data is not stored in a database; successful API responses are cached briefly in memory.
-- The page size is fixed at 10 products per page.
 - Products with invalid required identity data are skipped instead of being assigned fake fallback IDs.
 - Missing numeric business values are displayed as `N/A` instead of `0`.
-- Tests cover the main backend behavior and were added after being explicitly requested.
 
 ## Why These Choices
 
 - Flask and Jinja keep the app small, readable, and close to the assignment requirements.
 - A separate service layer keeps DummyJSON integration, normalization, and routes cleanly separated.
-- Small interfaces keep the cache and API client replaceable without changing route or template code.
 - Vanilla JavaScript is enough for the gallery behavior without adding unnecessary frontend complexity.
-- `uv` and the Docker setup make local development, CI, and deployment consistent.
 - The lightweight in-memory cache reduces repeated API calls without adding extra infrastructure for a small assignment.
 
 ## Known Limitations
