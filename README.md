@@ -2,7 +2,8 @@
 
 Flask app for the DummyJSON products assignment. It renders a responsive product table with backend search, backend pagination, thumbnails, and a small vanilla JavaScript gallery.
 
-Live demo: https://products-api-assignment-production.up.railway.app (available until May 21, 2026)
+Live demo: https://products-api-assignment-production.up.railway.app
+(available until May 21, 2026)
 
 ## Prerequisites
 
