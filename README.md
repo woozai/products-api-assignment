@@ -2,6 +2,8 @@
 
 Flask web application for the DummyJSON products assignment. The app renders a product table with backend-powered search, backend pagination, thumbnail images, and a vanilla JavaScript image gallery.
 
+Live deployment: https://products-api-assignment-production.up.railway.app
+
 ## Prerequisites
 
 - Python 3.13.12
