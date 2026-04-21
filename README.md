@@ -84,6 +84,8 @@ The Flask route in `app/routes/products.py` reads the `page` and `q` query param
 - If `q` has a search value, the backend calls the DummyJSON `/products/search` endpoint.
 - Pagination is handled in the backend by converting the page number into DummyJSON `skip` and `limit` parameters.
 - The service layer in `app/services/products.py` calls DummyJSON, validates the response, and normalizes product data before it reaches the template.
+- Products missing a valid `id` are skipped during normalization instead of being assigned a fake fallback ID.
+- Missing or invalid numeric business fields like price, rating, and stock are rendered as `N/A` instead of `0`.
 - Successful product responses are cached briefly in memory so repeated requests do not always call DummyJSON.
 - The Jinja template renders the search form, product table, pagination links, empty states, and error messages.
 

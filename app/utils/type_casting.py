@@ -2,20 +2,28 @@ from typing import Any
 from urllib.parse import urlparse
 
 
-def to_float(value: Any, default: float = 0.0) -> float:
-    """Convert API values to floats without letting bad data crash rendering."""
-    try:
-        return float(value)
-    except (TypeError, ValueError):
-        return default
-
-
-def to_int(value: Any, default: int = 0) -> int:
+def to_int_or_default(value: Any, default: int = 0) -> int:
     """Convert API values to integers without raising on missing fields."""
     try:
         return int(value)
     except (TypeError, ValueError):
         return default
+
+
+def to_optional_float(value: Any) -> float | None:
+    """Convert API values to floats and preserve missing or invalid values as None."""
+    try:
+        return float(value)
+    except (TypeError, ValueError):
+        return None
+
+
+def to_optional_int(value: Any) -> int | None:
+    """Convert API values to integers and preserve missing or invalid values as None."""
+    try:
+        return int(value)
+    except (TypeError, ValueError):
+        return None
 
 
 def to_str(value: Any, default: str = "N/A") -> str:
@@ -48,4 +56,8 @@ def to_safe_image_url(value: Any) -> str:
 
 def to_safe_image_urls(value: Any) -> list[str]:
     """Filter gallery image URLs so unsafe URL schemes are ignored."""
-    return [image_url for image_url in (to_safe_image_url(item) for item in to_str_list(value)) if image_url]
+    return [
+        image_url
+        for image_url in (to_safe_image_url(item) for item in to_str_list(value))
+        if image_url
+    ]
