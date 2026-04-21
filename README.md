@@ -165,6 +165,8 @@ wordpress-plugin/products-assignment/
 
 It is separate from the Flask app and must be run inside a WordPress site.
 
+To test it locally, you need a working WordPress installation, for example a local site created with a desktop tool like Local, or any other WordPress environment.
+
 To run it locally:
 
 1. Copy or symlink `wordpress-plugin/products-assignment/` into a WordPress plugins folder:
