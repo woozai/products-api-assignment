@@ -69,6 +69,8 @@ jobs:
     runs-on: ubuntu-latest
     needs: backend
     if: github.ref == 'refs/heads/main'
+    env:
+      RAILWAY_SERVICE: ${{ vars.RAILWAY_SERVICE || 'products-api-assignment' }}
 
     steps:
       - name: Check out repository
@@ -85,4 +87,4 @@ jobs:
       - name: Deploy to Railway
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
-        run: railway up
+        run: railway up --service "$RAILWAY_SERVICE"
