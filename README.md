@@ -2,7 +2,7 @@
 
 Flask web application for the DummyJSON products assignment. The app renders a product table with backend-powered search, backend pagination, thumbnail images, and a vanilla JavaScript image gallery.
 
-Live deployment: https://products-api-assignment-production.up.railway.app
+Live demo: https://products-api-assignment-production.up.railway.app
 
 ## Prerequisites
 
@@ -30,6 +30,8 @@ macOS or Linux:
 ```bash
 ./dev.sh
 ```
+
+If needed, make the shell script executable once with `chmod +x dev.sh`.
 
 These scripts install dependencies from `uv.lock` and start the app at `http://127.0.0.1:5000`.
 
@@ -87,52 +89,32 @@ http://127.0.0.1:8000
 
 Railway deployment is configured in `railway.json` to build from the root `Dockerfile`.
 
-The production container runs the app with Gunicorn and binds to Railway's injected `PORT` value instead of using Flask's development server.
+The production container runs the app with Gunicorn, binds to Railway's injected `PORT` value, and avoids Flask's development server.
 
 ## CI Security Scan
 
-GitHub Actions builds the Docker image with the local CI tag:
-
-```text
-products-api-assignment:ci
-```
-
-The workflow scans that image with Trivy before running the container smoke check. The image is scanned only inside CI and is not pushed to a registry.
-
-Trivy checks:
-
-- operating system packages from the Docker base image, such as Debian packages;
-- Python packages installed in the container;
-- only vulnerability findings, not secrets or configuration issues;
-- only `HIGH` and `CRITICAL` severities.
-
-CI fails when Trivy finds a `HIGH` or `CRITICAL` vulnerability that has a fixed version available. Unfixed vulnerabilities are still printed in the CI logs, but they do not fail the build because there is no patched package version to upgrade to yet.
+GitHub Actions scans the CI Docker image with Trivy and fails the build only for fixable `HIGH` or `CRITICAL` vulnerabilities.
 
 ## How The App Works
 
-The Flask route in `app/routes/products.py` reads the `page` and `q` query parameters from the browser URL.
+The route reads `page` and `q` from the browser URL, then calls the service layer to either list products or search DummyJSON from the backend. Pagination is converted into DummyJSON `skip` and `limit` parameters, and the response is normalized before rendering.
 
-- If `q` is empty, the backend calls the DummyJSON `/products` endpoint.
-- If `q` has a search value, the backend calls the DummyJSON `/products/search` endpoint.
-- Pagination is handled in the backend by converting the page number into DummyJSON `skip` and `limit` parameters.
-- The service layer in `app/services/products.py` calls DummyJSON, validates the response, and normalizes product data before it reaches the template.
-- Products missing a valid `id` are skipped during normalization instead of being assigned a fake fallback ID.
-- Missing or invalid numeric business fields like price, rating, and stock are rendered as `N/A` instead of `0`.
-- Successful product responses are cached briefly in memory so repeated requests do not always call DummyJSON.
-- The Jinja template renders the search form, product table, pagination links, empty states, and error messages.
+Products with invalid `id` values are skipped, while missing numeric fields like price, rating, and stock are shown as `N/A` instead of fake zero values. The Jinja templates render the table, messages, and pagination links from that normalized data.
+
+## Project Flow
+
+1. The browser sends a request to the Flask route with optional `page` and `q` query parameters.
+2. The route calculates pagination values and calls the product service.
+3. The service checks the in-memory cache, then calls DummyJSON if needed.
+4. The DummyJSON response is validated and normalized into `Product` and `ProductPage` objects.
+5. Flask passes that normalized data to the Jinja templates.
+6. The browser receives fully rendered HTML, and the gallery JavaScript enhances only the image-row interaction.
 
 ## Backend Cache
 
-The app uses a small in-memory cache for successful DummyJSON product responses. Cached values are stored inside the running Flask process for 60 seconds.
+Successful DummyJSON responses are cached in memory for 60 seconds per Flask process. Cache keys include the request mode, search query, page size, and skip value, so listing, search, and pagination states are cached separately.
 
-Cache keys include the request type, search query, page size, and skip value. That means normal listing pages, search results, and different pagination pages are cached separately.
-
-The cache is intentionally simple:
-
-- failed API responses are not cached;
-- raw exceptions are not cached;
-- the cache resets when Flask restarts;
-- the cache is not shared across multiple server processes or containers.
+Failed responses are not cached, the cache resets on restart, and it is intentionally local to a single process.
 
 ## Code Structure
 
@@ -142,34 +124,29 @@ The app uses small abstract base classes for replaceable backend pieces. `Memory
 
 ## Gallery Behavior
 
-Each product row has a `Gallery` button. The backend renders up to 3 image URLs into the button as HTML data attributes.
+Each product row includes a `Gallery` button with up to 3 backend-rendered image URLs stored in data attributes. Vanilla JavaScript reads those values and inserts a gallery row directly below the clicked product without making any browser-side API requests.
 
-The JavaScript in `app/static/js/gallery.js` reads those rendered image URLs and inserts a gallery row directly below the clicked product row. It does not fetch product data from DummyJSON or any other API.
-
-Clicking the same Gallery button closes the gallery. Opening another product gallery closes the previous one.
+Clicking the same button closes the gallery, and opening a different one closes the previous gallery first.
 
 ## Assumptions And Decisions
 
 - Flask was chosen for the backend implementation.
-- API calls, search, and pagination are handled in Python/Flask, not frontend JavaScript.
-- The UI uses Jinja, plain CSS, and vanilla JavaScript only.
 - The project uses `uv` for dependency management and local commands.
+- API calls, search, and pagination stay in the backend, not frontend JavaScript.
+- The UI uses Jinja, plain CSS, and vanilla JavaScript only.
 - Product data is not stored in a database; successful API responses are cached briefly in memory.
-- Small dataclass models are used to keep product and pagination data predictable.
 - The page size is fixed at 10 products per page.
+- Products with invalid required identity data are skipped instead of being assigned fake fallback IDs.
+- Missing numeric business values are displayed as `N/A` instead of `0`.
 - Tests cover the main backend behavior and were added after being explicitly requested.
 
 ## Why These Choices
 
-- Flask keeps the project small and clear while still supporting routes, templates, and backend service logic.
-- Jinja is built into Flask, so it is a good fit for rendering the product table from backend data.
-- Vanilla JavaScript is enough for the Gallery button behavior and follows the assignment requirement to avoid frontend frameworks.
-- `uv` provides fast, reproducible dependency management through `pyproject.toml` and `uv.lock`.
-- A service layer keeps DummyJSON API logic separate from routes and templates.
-- Dataclass models make API data easier to pass around without adding database or schema complexity.
-- Small utility functions keep pagination and type conversion reusable and easier to understand.
-- A small in-memory cache reduces repeated external API calls without adding Redis or another service for this assignment.
-- Abstract base classes keep the cache and product API client replaceable without adding a heavy framework.
+- Flask and Jinja keep the app small, readable, and close to the assignment requirements.
+- A separate service layer keeps DummyJSON integration, normalization, and routes cleanly separated.
+- Vanilla JavaScript is enough for the gallery behavior without adding unnecessary frontend complexity.
+- `uv` and the Docker setup make local development, CI, and deployment consistent.
+- The lightweight in-memory cache reduces repeated API calls without adding extra infrastructure for a small assignment.
 
 ## Known Limitations
 
@@ -180,13 +157,15 @@ Clicking the same Gallery button closes the gallery. Opening another product gal
 
 ## WordPress Plugin Bonus
 
-The optional WordPress plugin lives in:
+The WordPress plugin lives in:
 
 ```text
 wordpress-plugin/products-assignment/
 ```
 
 It is separate from the Flask app and must be run inside a WordPress site.
+
+To test it locally, you need a working WordPress installation, for example a local site created with a desktop tool like Local, or any other WordPress environment.
 
 To run it locally:
 
